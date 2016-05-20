@@ -6,31 +6,32 @@
      * Description Used to create the basic game object, useful for buttons, objects, and charicters.
      */
     HYPER.Sprite = function (e) {
-
+        
         this.children = [];
 
         this.addChild = function (child) {
             this.children.push(child);
         };
         this.removeChild = function (child) {
-            for (i = 0; i < this.children.length; i++) {
-                if (this.children[i]._ID == child._ID) {
-                    this.children.splice(i, 1);
-                };
-            };
+            var i = this.children.indexOf(child);
+            if (i !== -1) {
+                this.children.splice(i, 1);
+            }
+            return this;
         };
         this.removeAllChildren = function (child) {
-            this.children = [];
+            this.children.splice(0, this.children.length);
+            return this;
         };
 
         this._ShapeType = "rect";
         this._ID = Math.random() * Math.random();
-        this.x = (typeof e.x === 'undefined') ? 0 : e.x;
-        this.y = (typeof e.y === 'undefined') ? 0 : e.y;
+        this.x = e.x || 0; //coalesce to 0 for falsy values 0, NaN, null, undefined
+        this.y = e.y || 0;
         this.width = (typeof e.width === 'undefined') ? 32 : e.width;
         this.height = (typeof e.height === 'undefined') ? 32 : e.height;
-        this.zIndex = (typeof e.zIndex === 'undefined') ? 0 : e.zIndex;
-        this.degrees = (typeof e.degrees === 'undefined') ? 0 : e.degrees;
+        this.zIndex = e.zIndex || 0;
+        this.degrees = e.degrees || 0;
         this.rotation = e.rotation || {};
         e.rotation = e.rotation || {};
         this.rotation.y = (typeof e.rotation.y === 'undefined') ? this.height / 2 : e.rotation.y;
@@ -40,8 +41,8 @@
         e.size = e.size || {};
         this.size = e.size;
         this.size.autoAdjust = (typeof e.size.autoAdjust === 'undefined') ? true : e.size.autoAdjust;
-        this.size.x = (typeof e.size.x === 'undefined') ? 0 : e.size.x;
-        this.size.y = (typeof e.size.y === 'undefined') ? 0 : e.size.y;
+        this.size.x = e.size.x || 0;
+        this.size.y = e.size.y || 0;
         this.size.width = (typeof e.size.width === 'undefined') ? this.width : e.size.width;
         this.size.height = (typeof e.size.height === 'undefined') ? this.height : e.size.height;
 
@@ -147,8 +148,9 @@
             }
 
             for (var i = 0; i < 10; i++) {
-                this._pointerX = ((HYPER.Input.Pointer.getPointer(i).x - o.offsetLeft) * (o.camera.width / o.view.width)) - o.camera.x;
-                this._pointerY = ((HYPER.Input.Pointer.getPointer(i).y - o.offsetTop) * (o.camera.height / o.view.height)) - o.camera.y;
+                var pointer = HYPER.Input.Pointer.getPointer(i);
+                this._pointerX = ((pointer.x - o.offsetLeft) * (o.camera.width / o.view.width)) - o.camera.x;
+                this._pointerY = ((pointer.y - o.offsetTop) * (o.camera.height / o.view.height)) - o.camera.y;
                 if (this._pointerX >= this.x + this.size.x &&
                     this._pointerX <= this.x + this.size.width &&
                     this._pointerY >= this.y + this.size.y &&
@@ -161,13 +163,13 @@
                         this.events.onhover[b](this._InputInfo);
                         this.onhover(this._InputInfo);
                     }
-                    if (HYPER.Input.Pointer.getPointer(i).down == true) {
+                    if (pointer.down) {
                         for (var b = 0; b < this.events.ondown.length; b++) {
                             this.events.ondown[b](this._InputInfo);
                             this.ondown(this._InputInfo);
                         }
                     }
-                    if (HYPER.Input.Pointer.getPointer(i).up == true) {
+                    if (pointer.up) {
                         for (var b = 0; b < this.events.onup.length; b++) {
                             this.events.onup[b](this._InputInfo);
                             this.onup(this._InputInfo);
@@ -177,13 +179,13 @@
                             this.onclick(this._InputInfo);
                         }
                     }
-                    if (HYPER.Input.Pointer.getPointer(i).hold == true) {
+                    if (pointer.hold) {
                         for (var b = 0; b < this.events.onhold.length; b++) {
                             this.events.onhold[b](this._InputInfo);
                             this.onhold(this._InputInfo);
                         }
                     }
-                    if (HYPER.Input.Pointer.getPointer(i).dblclick == true) {
+                    if (pointer.dblclick) {
                         for (var b = 0; b < this.events.ondblclick.length; b++) {
                             this.events.ondblclick[b](this._InputInfo);
                             this.ondblclick(this._InputInfo);
