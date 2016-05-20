@@ -94,7 +94,7 @@
 
     HYPER.Sprite.prototype._update = function _update(o) {
 
-      for (var i = 0; i < this.children.length; i++) {
+        for (var i = 0; i < this.children.length; i++) {
           this.children[i]._update({
               camera: {
                   x: this.x + o.camera.x,
@@ -106,26 +106,26 @@
               offsetTop: o.offsetTop,
               view: o.view,
           });
-      }
-
-      this.update(o);
-      this.physics.update();
-
-      if (this.size.autoAdjust) {
+        }
+        
+        this.update(o);
+        this.physics.update();
+        
+        if (this.size.autoAdjust) {
           this.size.width = this.width;
           this.size.height = this.height;
-      }
-      if (isFinite(this.degrees)) {
+        }
+        if (isFinite(this.degrees)) {
           while (this.degrees >= 360) {
               this.degrees -= 360;
           }
-    
+        
           while (this.degrees < 0) {
             this.degrees += 360;
           }
-      }
-
-      for (i = 0; i < 10; i++) {
+        }
+        
+        for (i = 0; i < 10; i++) {
           var pointer = HYPER.Input.Pointer.getPointer(i), b;
           this._pointerX = ((pointer.x - o.offsetLeft) * (o.camera.width / o.view.width)) - o.camera.x;
           this._pointerY = ((pointer.y - o.offsetTop) * (o.camera.height / o.view.height)) - o.camera.y;
