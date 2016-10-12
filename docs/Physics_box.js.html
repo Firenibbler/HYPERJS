@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Physics/box.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Physics/box.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+ * Copyright (c) 2016 Ivo Wetzel
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files 
+ * (the "Software"), to deal in the Software without restriction, 
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+ * and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE 
+ * USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+/* This software has been heavily modified by Andrew Stavast.
+ * If you wish to view the original software,
+ * it can currently be found at https://gist.github.com/BonsaiDen/6144232
+ */
+(function () {
+    'use strict';
+
+    /**
+     * Holds all info for the BOXJS physics engine.
+     * @namespace HYPER.Physics.BoxJS
+     */
+
+    HYPER.Physics.BoxJS = {};
+
+    /**
+     * Create a new vector.
+     * @class HYPER.Physics.BoxJS.Vector2
+     * @param {number} x X placement of the vector.
+     * @param {number} y Y placement of the vector.
+     */
+
+    HYPER.Physics.BoxJS.Vector2 = function (x, y) {
+
+        /**
+         * @property {number} y - Y location of the vector.
+         */
+
+        this.x = x;
+
+        /**
+         * @property {number} x - X location of the vector.
+         */
+
+        this.y = y;
+    }
+
+    HYPER.Physics.BoxJS.Vector2.prototype = {
+
+        /**
+         * Add 2 vectors.
+         * @method HYPER.Physics.BoxJS.Vector2.add
+         * @param {object} v vector.
+         */
+
+        add: function (v) {
+            return new HYPER.Physics.BoxJS.Vector2(this.x + v.x, this.y + v.y);
+        },
+
+        /**
+         * subtract 2 vectors.
+         * @method HYPER.Physics.BoxJS.Vector2.sub
+         * @param {object} v vector.
+         */
+
+        sub: function (v) {
+            return new HYPER.Physics.BoxJS.Vector2(this.x - v.x, this.y - v.y);
+        },
+
+        /**
+         * Dot value of 2 vectors
+         * @method HYPER.Physics.BoxJS.Vector2.dot
+         * @param {object} v vector.
+         */
+
+        dot: function (v) {
+            return this.x * v.x + this.y * v.y;
+        },
+
+        /**
+         * Cross value of 2 vectors
+         * @method HYPER.Physics.BoxJS.Vector2.cross
+         * @param {object} v vector.
+         */
+
+        cross: function (v) {
+            return this.x * v.y - this.y * v.x;
+        },
+
+        /**
+         * Divide 2 vectors
+         * @method HYPER.Physics.BoxJS.Vector2.div
+         * @param {object} v vector.
+         */
+
+        div: function (s) {
+            this.x /= s;
+            this.y /= s;
+            return this;
+        },
+
+        /**
+         * Multiply 2 vectors
+         * @method HYPER.Physics.BoxJS.Vector2.mul
+         * @param {object} v vector.
+         */
+
+        mul: function (s) {
+            this.x *= s;
+            this.y *= s;
+            return this;
+        },
+
+        /**
+         * Normalize a vector.
+         * @method HYPER.Physics.BoxJS.Vector2.normalize
+         */
+
+        normalize: function () {
+
+            var len = this.length();
+            if (this.length > 0.0001) {
+                var invLen = 1.0 / len;
+                this.x *= invLen;
+                this.y *= invLen;
+            }
+
+        },
+
+        /**
+         * Get the squared length of a vector.
+         * @method HYPER.Physics.BoxJS.Vector2.length
+         */
+
+        lengthSqr: function () {
+            return this.x * this.x + this.y * this.y;
+        },
+
+        /**
+         * Get the length of a vector.
+         * @method HYPER.Physics.BoxJS.Vector2.length
+         */
+
+        length: function () {
+            return Math.sqrt(this.x * this.x + this.y * this.y);
+        }
+
+    };
+
+    /**
+     * Create a new material.
+     * @class HYPER.Physics.BoxJS.material
+     * @param {object} e object to pass all parameters.
+     * @param {boolean} e.fixed=false Should the physics body be fixed in place?
+     * @param {number} e.restitution=0.1 How bouncy is the material?
+     * @param {number} e.dynamicFriction=0.3 How much does friction affect this material while moving?
+     * @param {number} e.staticFriction=1 How much does friction affect this material while at rest?
+     * @param {array} e.dontCollideWith What materials does this pass through? Accepts the material name.
+     * @param {string} e.name What is this material called?
+     */
+
+    HYPER.Physics.BoxJS.material = function (e) {
+        e = e || {};
+
+        /**
+         * @property {string} _ID - The specific ID for this object.
+         */
+
+        this._ID = "material " + Math.random() + "" + Math.random();
+
+        /**
+         * @property {string} type - What type of object this is.
+         */
+
+        this.type = "material";
+
+        /**
+         * @property {boolean} fixed=false - Should this material be fixed in place?
+         */
+
+        this.fixed = e.fixed || false;
+
+        /**
+         * @property {number} restitution=0.1 - How bouncy is this material?
+         */
+
+        this.restitution = e.restitution || 0.1;
+
+        /**
+         * @property {number} staticFriction=1 - How much does friction affect this material while at rest?
+         */
+
+        this.staticFriction = e.staticFriction || 1;
+
+        /**
+         * @property {number} dynamicFriction=1 - How much does friction affect this material while in motion?
+         */
+
+        this.dynamicFriction = e.dynamicFriction || 0.3;
+
+        /**
+         * @property {array} dontCollideWith - What materials does this pass through? Accepts the material name.
+         */
+
+        this.dontCollideWith = e.dontCollideWith || [];
+
+        /**
+         * @property {array} name - What is this material called?
+         */
+
+        this.name = e.name || "material number: " + math.random();
+
+    }
+
+    var DEFAULT_MATERIAL = new HYPER.Physics.BoxJS.material({
+        name: "DEFAULT_MATERIAL"
+    });
+
+
+    /**
+     * Create a new AABB Box.
+     * @class HYPER.Physics.BoxJS.Box
+     * @param {object} e object to pass all parameters.
+     * @param {HYPER.Physics.BoxJS.Vector2} e.pos Position of object.
+     * @param {object} e.size Size of object.
+     * @param {number} e.size.width Width of object.
+     * @param {number} e.size.height Height of object.
+     * @param {number} e.mass Mass of object.
+     */
+
+    HYPER.Physics.BoxJS.Box = function (e) {
+        e = e || {};
+        e.mass = e.mass || 1;
+        e.maxVel = e.maxVel || {};
+
+        if (e.material) {
+            if (e.material.type === "material") {
+                this.material = e.material;
+            }
+        } else {
+            /**
+             * @property {number} material - The material of this object.
+             */
+            this.material = DEFAULT_MATERIAL;
+        }
+
+        /**
+         * @property {number} mass - The mass of this object.
+         */
+
+        this.mass = e.mass !== undefined ? e.mass : 1;
+
+        /**
+         * @property {number} active - Is object active?
+         */
+
+        this.active = true;
+
+        /**
+         * @property {number} isSleeping - Is object sleeping?
+         */
+
+        this.isSleeping = false;
+
+        /**
+         * @property {number} sleepCounter - How long has the object been sleeping?
+         */
+
+        this.sleepCounter = 0;
+
+        /**
+         * @property {string} type - What type of object this is.
+         */
+
+        this.type = "boxJSAABB";
+
+        /**
+         * @property {string} _ID - The specific ID for this object.
+         */
+
+        this._ID = "boxJSAABB " + Math.random() + "" + Math.random();
+
+        /**
+         * @private
+         * @property {string} immovable - Is the object immovable?
+         */
+
+        this.immovable = e.fixed || false;
+
+        /**
+         * @property {HYPER.Physics.BoxJS.Vector2} oldPos - The old position of the object.
+         */
+
+        this.oldPos = new HYPER.Physics.BoxJS.Vector2(0, 0);
+
+        /**
+         * @property {HYPER.Physics.BoxJS.Vector2} center - The center of the object.
+         */
+
+        this.center = new HYPER.Physics.BoxJS.Vector2(e.width / 2 || 16, e.height / 2 || 16);
+
+        /**
+         * @property {number} im - The inverse mass.
+         */
+
+        this.im = e.mass === 0 ? 0 : 1 / e.mass;
+
+        /**
+         * @property {number} restitution=0.1 - The bouncyness of the object.
+         */
+
+        this.restitution = 0.1;
+
+        /**
+         * @property {number} staticFriction=1 - How much does friction affect this material while at rest?
+         */
+
+        this.staticFriction = 1;
+
+        /**
+         * @property {number} staticFriction=1 - How much does friction affect this material while in motion?
+         */
+
+        this.dynamicFriction = 0.3;
+
+        /**
+         * @property {HYPER.Physics.BoxJS.Vector2} maxVel={x:1000,y:1000} - What is the max velocity?
+         */
+
+        this.maxVel = new HYPER.Physics.BoxJS.Vector2(e.maxVel.x || 1000, e.maxVel.y || 1000);
+
+        /**
+         * @property {HYPER.Physics.BoxJS.Vector2} pos - What is position of the object?
+         */
+
+        this.pos = new HYPER.Physics.BoxJS.Vector2(e.x, e.y);
+
+        /**
+         * @property {HYPER.Physics.BoxJS.Vector2} vel - The velocity of the object.
+         */
+
+        this.vel = new HYPER.Physics.BoxJS.Vector2(0, 0);
+
+        /**
+         * @property {HYPER.Physics.BoxJS.Vector2} acc - The accelartion of the object.
+         */
+
+        this.acc = new HYPER.Physics.BoxJS.Vector2(0, 0);
+
+        /**
+         * @property {number} sleepThreshold - How slow should the object be to go to sleep.
+         */
+
+        this.sleepThreshold = e.sleepThreshold || 1;
+
+        /**
+         * @property {object} size - What size the object is.
+         */
+
+        this.size = {
+
+            /**
+             * @property {number} size.width - How wide the object is.
+             */
+
+            width: e.width,
+
+            /**
+             * @property {number} size.height - How tall the object is.
+             */
+
+            height: e.height
+        };
+
+        /**
+         * @property {boolean} fixed=false - Is the object fixed in place?
+         */
+
+        this.fixed = e.fixed || false;
+
+        /**
+         * @property {HYPER.Physics.BoxJS.Vector2} force - Forces applied to the object.
+         */
+
+        this.force = new HYPER.Physics.BoxJS.Vector2(0, 0);
+
+        /**
+         * @property {HYPER.Physics.BoxJS.Vector2} min - Minium X and Y point of the object.
+         */
+
+        this.min = new HYPER.Physics.BoxJS.Vector2(0, 0);
+
+        /**
+         * @property {HYPER.Physics.BoxJS.Vector2} max - Maxium X and Y point of the object.
+         */
+
+        this.max = new HYPER.Physics.BoxJS.Vector2(0, 0);
+
+
+
+
+    }
+
+    HYPER.Physics.BoxJS.Box.prototype = {
+
+        /**
+         * Update the material data.
+         * @private
+         * @method HYPER.Physics.BoxJS.Box.updateMaterial
+         */
+
+        updateMaterial: function () {
+            this.restitution = this.material.restitution;
+            this.fixed = this.fixed || this.material.fixed;
+            this.staticFriction = this.material.staticFriction;
+            this.dynamicFriction = this.material.dynamicFriction;
+        },
+
+        /**
+         * Check to see if overlaping another box.
+         * @method HYPER.Physics.BoxJS.Box.isOverlapping
+         * @param {HYPER.Physics.BoxJS.Box} other box to overlap.
+         */
+
+        isOverlapping: function (other) {
+            if (other.type === "boxJSAABB") {
+                if (this.max.x &lt; other.min.x || this.min.x > other.max.x) {
+                    return false;
+
+                } else if (this.max.y &lt; other.min.y || this.min.y > other.max.y) {
+                    return false;
+
+                } else {
+                    return true;
+                }
+            } else if (other.x &amp;&amp; other.y &amp;&amp; other.width &amp;&amp; other.height) {
+                if (this.min.x &lt;= rect2.x + rect2.width &amp;&amp; this.max.x >= rect2.x &amp;&amp;
+                    this.min.y &lt;= rect2.y + rect2.height &amp;&amp; this.max.x > rect2.y) {
+                    // If they are colliding, return true
+                    return true;
+                } else {
+                    // If they are not colliding, return false
+                    return false;
+                }
+            } else if (other.type === "boxJSParticle") {
+                if (other.pos.x > this.min.x &amp;&amp;
+                    other.pos.x &lt; this.max.x &amp;&amp;
+                    other.pos.y > this.min.y &amp;&amp;
+                    other.pos.y &lt; this.max.y) {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+
+        },
+
+        /**
+         * Update the sleeping state.
+         * @private
+         * @method HYPER.Physics.BoxJS.Box.updateSleeping
+         * @param {boolean} allow If sleeping is allowed.
+         */
+
+        updateSleeping: function (allow) {
+            if (allow) {
+
+                if (this.speed &lt;= this.sleepThreshold) {
+                    this.sleepCounter++;
+                } else if (this.speed > this.sleepThreshold) {
+                    this.isSleeping = false;
+                    this.sleepCounter = 0;
+                }
+
+
+                if (this.force.x !== 0 || this.force.y !== 0) {
+                    this.sleepCounter = 0;
+                }
+                if (this.sleepCounter >= 100) {
+                    this.isSleeping = true;
+                } else {
+                    this.isSleeping = false;
+                }
+            } else {
+                this.isSleeping = false;
+                this.sleepCounter = 0;
+            }
+            if (!this.active) {
+                this.sleepCounter = 0;
+            }
+            if (this.fixed || this.im === 0) {
+                this.isSleeping = true;
+                this.sleepCounter = 201;
+            }
+        },
+
+        /**
+         * Set the sleeping state.
+         * @method HYPER.Physics.BoxJS.Box.setSleeping
+         * @param {boolean} set Set the sleeping state
+         */
+
+        setSleeping: function (set) {
+            if (set === false) {
+                this.isSleeping = false;
+                this.sleepCounter = 0;
+            } else {
+                this.isSleeping = true;
+                this.sleepCounter = 201;
+            }
+
+        },
+
+        /**
+         * Update the bounds of the object.
+         * @private
+         * @method HYPER.Physics.BoxJS.Box.updateBounds
+         */
+
+        updateBounds: function () {
+            this.min.x = this.pos.x;
+            this.max.x = this.pos.x + this.size.width;
+            this.min.y = this.pos.y;
+            this.max.y = this.pos.y + this.size.height;
+
+            this.im = this.mass === 0 ? 0 : 1 / this.mass;
+            if (this.fixed) {
+                this.im = 0;
+            }
+
+        },
+
+        /**
+         * Integrate the forces.
+         * @private
+         * @method HYPER.Physics.BoxJS.Box.integrateForces
+         * @param {HYPER.Physics.BoxJS.Vector2} gravity Set the gravity in the x and y position.
+         */
+
+        integrateForces: function (gravity) {
+            if (this.im !== 0 &amp;&amp; !this.isSleeping &amp;&amp; this.active) {
+                this.vel.x += this.acc.x;
+                this.vel.y += this.acc.y;
+                this.vel.x += (this.force.x * this.im + gravity.x) / 2;
+                this.vel.y += (this.force.y * this.im + gravity.y) / 2;
+
+                this.angularVel += this.angularAcc;
+            }
+        },
+
+        /**
+         * Integrate the velocity.
+         * @private
+         * @method HYPER.Physics.BoxJS.Box.integratevel
+         * @param {HYPER.Physics.BoxJS.Vector2} gravity Set the gravity in the x and y position.
+         * @param {boolean} allow If sleeping is allowed.
+         */
+
+        integratevel: function (gravity, allow) {
+            if (this.isSleeping === true || !this.active) {
+                this.vel.x = 0;
+                this.vel.y = 0;
+            } else {
+                if (this.vel.x > this.maxVel.x) {
+                    this.vel.x = this.maxVel.x;
+                }
+                if (this.vel.y > this.maxVel.y) {
+                    this.vel.y = this.maxVel.y;
+                }
+                if (this.im !== 0) {
+                    if (!this.fixed) {
+
+
+                        this.pos.x += this.vel.x;
+                        this.pos.y += this.vel.y;
+                        this.angularPos += this.angularVel;
+
+
+                    }
+                }
+            }
+
+            this.integrateForces(gravity, allow);
+            this.speed = Math.sqrt((this.pos.x - this.oldPos.x) * (this.pos.x - this.oldPos.x) + (this.pos.y - this.oldPos.y) * (this.pos.y - this.oldPos.y));
+            //this.speed = Math.sqrt((this.vel.x) * (this.vel.x) + (this.vel.y) * (this.vel.y));
+
+
+        },
+
+        /**
+         * Apply an impulse on the object.
+         * @method HYPER.Physics.BoxJS.Box.applyImpulse
+         * @param {number} x X impulse.
+         * @param {number} y Y impulse.
+         */
+
+        applyImpulse: function (x, y) {
+            if (!this.fixed &amp;&amp; this.active) {
+                this.vel.x += this.im * x;
+                this.vel.y += this.im * y;
+
+            }
+        },
+
+        /**
+         * Apply an force on the object.
+         * @method HYPER.Physics.BoxJS.Box.applyForce
+         * @param {number} x X force.
+         * @param {number} y Y force.
+         */
+
+        applyForce: function (x, y) {
+            if (!this.fixed &amp;&amp; this.active) {
+                this.force.x += x;
+                this.force.y += y;
+
+            }
+        },
+
+        /**
+         * clear the forces on the object.
+         * @method HYPER.Physics.BoxJS.Box.clearForces
+         */
+
+        clearForces: function () {
+            this.force.x = 0;
+            this.force.y = 0;
+        }
+
+    };
+
+    /**
+     * Collide 2 AABBs
+     * @private
+     * @method HYPER.Physics.BoxJS.collideAABB
+     * @param {HYPER.Physics.BoxJS.Box} a First box to collide.
+     * @param {HYPER.Physics.BoxJS.Box} b Second box to collide.
+     * @param {HYPER.Physics.BoxJS.Vector2} gravity Gravity to be applied.
+     * @param {number} epsilon Epsilon value to be used.
+     */
+
+    HYPER.Physics.BoxJS.collideAABB = function (a, b, gravity, epsilon) {
+        var e = Math.min(a.restitution || 0.1, b.restitution || 0.1);
+        var sf = 0;
+        var df = 0;
+
+        var normal = new HYPER.Physics.BoxJS.Vector2(0, 0);
+        var penetration = 0;
+
+
+        // TODO is this correct?
+        sf = Math.sqrt(a.staticFriction * b.staticFriction);
+        df = Math.sqrt(a.dynamicFriction * b.dynamicFriction);
+
+        // Figure out whether this is a resting collision, if so do not apply
+        // any restitution
+        var rx = b.vel.x - a.vel.x,
+            ry = b.vel.y - a.vel.y;
+
+        if ((rx * rx + ry * ry) &lt; (gravity.x * gravity.x + gravity.y * gravity.y) + epsilon) {
+            e = 0.0;
+        }
+
+
+        var nx = (a.pos.x + (a.size.width / 2)) - (b.pos.x + (b.size.width / 2)),
+            ny = (a.pos.y + (a.size.height / 2)) - (b.pos.y + (b.size.height / 2));
+
+        // Calculate half extends along x axis
+        var aex = (a.max.x - a.min.x) / 2,
+            bex = (b.max.x - b.min.x) / 2;
+        // Calculate half extends along y axis
+        var aey = (a.max.y - a.min.y) / 2,
+            bey = (b.max.y - b.min.y) / 2;
+
+        var keepGoing = false;
+
+        // Overlap on x axis
+        var xoverlap = aex + bex - Math.abs(nx);
+        if (xoverlap) {
+
+
+
+            // Overlap on y axis
+            var yoverlap = aey + bey - Math.abs(ny);
+            if (yoverlap) {
+
+                // Find out which axis is the axis of least penetration
+                if (xoverlap &lt; yoverlap) {
+
+                    // Point towards B knowing that n points from A to B
+                    normal.x = nx &lt; 0 ? 1 : -1;
+                    normal.y = 0;
+                    penetration = xoverlap;
+                    keepGoing = true;
+
+                } else {
+
+                    // Point towards B knowing that n points from A to B
+                    normal.x = 0;
+                    normal.y = ny &lt; 0 ? 1 : -1;
+                    penetration = yoverlap;
+                    keepGoing = true;
+
+                }
+
+            }
+
+        }
+        if (!keepGoing) {
+            return false;
+        }
+
+
+        // Relative vel from a to b
+        var rx = b.vel.x - a.vel.x,
+            ry = b.vel.y - a.vel.y,
+
+
+            velAlongNormal = rx * normal.x + ry * normal.y;
+
+        // If the velocities are separating do nothing
+        if (velAlongNormal > 0) {
+            return;
+
+        } else {
+
+
+
+            // Correct penetration
+            var j = -(1.0 + e) * velAlongNormal;
+            j /= (a.im + b.im);
+
+            // Apply the impulse each box gets a impulse based on its mass
+            // ratio
+            if (b.type !== "boxJSParticle") {
+                a.applyImpulse(-j * normal.x, -j * normal.y);
+            }
+            if (a.type !== "boxJSParticle") {
+                b.applyImpulse(j * normal.x, j * normal.y);
+            }
+
+
+            // Apply Friction
+            var tx = rx - (normal.x * velAlongNormal),
+                ty = ry - (normal.y * velAlongNormal),
+                tl = Math.sqrt(tx * tx + ty * ty);
+
+            if (tl > epsilon) {
+                tx /= tl;
+                ty /= tl;
+            }
+
+            var jt = -(rx * tx + ry * ty);
+            jt /= (a.im + b.im);
+
+            // Don't apply tiny friction impulses
+            if (Math.abs(jt) &lt; epsilon) {
+                //return;
+            }
+
+
+            if (Math.abs(jt) &lt; j * sf) {
+                tx = tx * jt;
+                ty = ty * jt;
+
+            } else {
+                tx = tx * -j * df;
+                ty = ty * -j * df;
+            }
+
+            if (b.type !== "boxJSParticle") {
+                a.applyImpulse(-tx, -ty);
+            }
+            if (a.type !== "boxJSParticle") {
+                b.applyImpulse(tx, ty);
+            }
+
+        }
+
+
+        var percent = 0.7,
+            slop = 0.05,
+            m = Math.max(penetration - slop, 0.0) / (a.im + b.im);
+
+        // Apply correctional impulse
+        var cx = m * normal.x * percent,
+            cy = m * normal.y * percent;
+
+
+
+        if (a.isSleeping) {
+            if (Math.abs(cx * a.im) > a.sleepThreshold / 4 || Math.abs(cy * a.im) > a.sleepThreshold / 4) {
+                a.sleepCounter = 0;
+                a.isSleeping = false;
+            }
+        }
+        if (b.isSleeping) {
+            if (Math.abs(cx * b.im) > b.sleepThreshold / 4 || Math.abs(cy * b.im) > b.sleepThreshold / 4) {
+                b.sleepCounter = 0;
+                b.isSleeping = false;
+            }
+        }
+        a.pos.x -= cx * a.im;
+        a.pos.y -= cy * a.im;
+
+        b.pos.x += cx * b.im;
+        b.pos.y += cy * b.im;
+
+
+    }
+
+    /**
+     * Collide 2 objects
+     * @private
+     * @method HYPER.Physics.BoxJS.collide
+     * @param {HYPER.Physics.BoxJS.Box} a First box to collide.
+     * @param {HYPER.Physics.BoxJS.Box} b Second box to collide.
+     * @param {HYPER.Physics.BoxJS.Vector2} gravity Gravity to be applied.
+     * @param {number} epsilon Epsilon value to be used.
+     */
+
+    HYPER.Physics.BoxJS.collide = function (a, b, gravity, epsilon) {
+        if (a.type === "boxJSAABB" &amp;&amp; b.type === "boxJSAABB") {
+            HYPER.Physics.BoxJS.collideAABB(a, b, gravity, epsilon);
+        }
+    };
+
+    var collisionObjects = [];
+    var collisionNumber = 0;
+
+    /**
+     * Creat a physics engine
+     * @class HYPER.Physics.BoxJS.Engine
+     * @param {object} e object to pass all parameters.
+     * @param {number} e.zIndex=0 Z index for the debug to render at.
+     * @param {HYPER.Physics.BoxJS.Vector2} e.gravity Gravity to be applied to objects.
+     * @param {boolean} e.allowSleeping Allow the objects to sleep.
+     * @param {boolean} e.debug Allow the objects outlines to be seen.
+     * @param {object} e.bounds Set the minium and maxium bounds of the world.
+     * @param {HYPER.Physics.BoxJS.Vector2} e.bounds.min Set the minium bounds of the world.
+     * @param {HYPER.Physics.BoxJS.Vector2} e.bounds.max Set the maxium bounds of the world.
+     */
+
+    HYPER.Physics.BoxJS.Engine = function (e) {
+        e = e || {};
+        e.gravity = e.gravity || {};
+
+        /**
+         * @property {number} zIndex - The z-index this will be rendered as.
+         */
+
+        this.zIndex = e.zIndex || 0
+
+        /**
+         * @property {number} iterations=10 - The number of iterations.
+         */
+
+        this.iterations = 10;
+
+        /**
+         * @property {HYPER.Physics.BoxJS.Vector2} gravity - The gravity of the world.
+         */
+
+        this.gravity = new HYPER.Physics.BoxJS.Vector2(e.gravity.x || 0, e.gravity.y || 1);
+
+        /**
+         * @property {boolean} allowSleeping - Allow bodies to sleep.
+         */
+
+        this.allowSleeping = e.allowSleeping || false;
+        this.contacts = [];
+        this.contactsLength = 0;
+        this.bodies = [];
+        this.length = 0;
+        this.debug = e.debug || false;
+        this.render = e.render || no0p;
+        this.update = e.update || no0p;
+        e.bounds = e.bounds || {};
+        this.bounds = {
+            min: e.bounds.min || {
+                x: -Infinity,
+                y: -Infinity
+            },
+            max: e.bounds.max || {
+                x: Infinity,
+                y: Infinity
+            },
+        }
+    }
+
+    HYPER.Physics.BoxJS.Engine.EPSILON = 0.0001;
+
+    HYPER.Physics.BoxJS.Engine.prototype = {
+
+        /**
+         * Finds and solves all collisions.
+         * @private
+         * @method HYPER.Physics.BoxJS.Engine.findCollisions
+         */
+
+        findCollisions: function () {
+
+            var DONT_COLLIDE = false;
+
+
+            for (var i = 0; i &lt; this.bodies.length; i++) {
+
+                var a = this.bodies[i];
+                for (var j = i + 1; j &lt; this.bodies.length; j++) {
+
+                    var b = this.bodies[j];
+
+                    if (a.active === false || b.active === false) {
+                        DONT_COLLIDE = true;
+                    }
+
+
+                    if (a.isSleeping === true &amp;&amp; b.isSleeping === true &amp;&amp; !DONT_COLLIDE) {
+                        DONT_COLLIDE = true;
+
+                    }
+
+
+
+                    if (a.isSleeping &amp;&amp; b.fixed &amp;&amp; !DONT_COLLIDE) {
+                        DONT_COLLIDE = true;
+                    } else if (a.fixed &amp;&amp; b.isSleeping &amp;&amp; !DONT_COLLIDE) {
+                        DONT_COLLIDE = true;
+                    }
+
+
+
+                    if (a.fixed &amp;&amp; b.fixed &amp;&amp; !DONT_COLLIDE) {
+                        DONT_COLLIDE = true;
+                    }
+                    if (a.im === 0 &amp;&amp; b.im === 0 &amp;&amp; !DONT_COLLIDE) {
+                        DONT_COLLIDE = true;
+                    }
+
+                    for (let g = 0; g &lt; b.material.dontCollideWith.length; g++) {
+                        if (b.material.dontCollideWith[g] === a.material.name &amp;&amp; !DONT_COLLIDE) {
+                            DONT_COLLIDE = true;
+                        }
+                    }
+                    for (let g = 0; g &lt; a.material.dontCollideWith.length; g++) {
+                        if (a.material.dontCollideWith[g] === b.material.name &amp;&amp; !DONT_COLLIDE) {
+                            DONT_COLLIDE = true;
+                        }
+                    }
+
+
+
+                    if (DONT_COLLIDE) {
+                        DONT_COLLIDE = false;
+                        continue;
+
+
+                    } else if (a.isOverlapping(b)) {
+
+                        HYPER.Physics.BoxJS.collide(a, b, this.gravity, HYPER.Physics.BoxJS.Engine.EPSILON);
+
+                    }
+
+
+                }
+
+            }
+
+        },
+
+        /**
+         * Integrates all forces
+         * @private
+         * @method HYPER.Physics.BoxJS.Engine.integrateForces
+         */
+
+        integrateForces: function () {
+            for (var i = 0; i &lt; this.bodies.length; i++) {
+                this.bodies[i].integrateForces(this.gravity);
+            }
+        },
+
+        /**
+         * Integrates all velocities.
+         * @private
+         * @method HYPER.Physics.BoxJS.Engine.integrateVelocities
+         */
+
+        integrateVelocities: function () {
+            for (var i = 0; i &lt; this.bodies.length; i++) {
+
+                this.bodies[i].integratevel(this.gravity, this.allowSleeping);
+
+                this.bodies[i].clearForces();
+                this.bodies[i].updateBounds();
+                this.bodies[i].updateMaterial();
+
+            }
+        },
+
+        /**
+         * Called by parent function.
+         * @private
+         * @method HYPER.Physics.BoxJS.Engine._update
+         * @param {number} a - Information to be known about parent object.
+         */
+
+        _update: function (a) {
+            for (let i = 0; i &lt; this.bodies.length; i++) {
+                this.bodies[i].oldPos.x = this.bodies[i].pos.x;
+                this.bodies[i].oldPos.y = this.bodies[i].pos.y;
+
+            }
+
+            this.findCollisions();
+            this.integrateForces();
+            this.integrateVelocities();
+
+
+
+            for (let i = 0; i &lt; this.bodies.length; i++) {
+
+                if (this.bodies[i].pos.x &lt; this.bounds.min.x) {
+                    this.bodies[i].pos.x = this.bounds.min.x;
+                }
+                if (this.bodies[i].pos.y &lt; this.bounds.min.y) {
+                    this.bodies[i].pos.y = this.bounds.min.y;
+                }
+                if (this.bodies[i].pos.x + this.bodies[i].size.width &lt; this.bounds.min.x) {
+                    this.bodies[i].pos.x = this.bounds.min.x - this.bodies[i].size.width;
+                }
+                if (this.bodies[i].pos.y + this.bodies[i].size.height &lt; this.bounds.min.y) {
+                    this.bodies[i].pos.y = this.bounds.min.y - this.bodies[i].size.height;
+                }
+                this.bodies[i].updateSleeping(this.allowSleeping);
+
+
+            }
+
+            this.update();
+
+        },
+
+        /**
+         * Called by parent function.
+         * @private
+         * @method HYPER.Physics.BoxJS.Engine._render
+         * @param {number} a - Information to be known about parent object.
+         */
+
+        _render: function (a) {
+            if (this.debug) {
+                HYPER.Graphics.styleToCTX(HYPER.Graphics.DEFAULT_STYLE, a.ctx);
+                for (let i = 0; i &lt; this.bodies.length; i++) {
+
+                    if (this.bodies[i].active) {
+                        a.ctx.beginPath();
+                        //a.ctx.rect(this.bodies[i].pos.x - a.camera.x, this.bodies[i].pos.y - a.camera.y, this.bodies[i].size.width, this.bodies[i].size.height);
+                        a.ctx.moveTo(this.bodies[i].min.x - a.camera.x, this.bodies[i].min.y - a.camera.y);
+                        a.ctx.lineTo(this.bodies[i].max.x - a.camera.x, this.bodies[i].min.y - a.camera.y);
+                        a.ctx.lineTo(this.bodies[i].max.x - a.camera.x, this.bodies[i].max.y - a.camera.y);
+                        a.ctx.lineTo(this.bodies[i].min.x - a.camera.x, this.bodies[i].max.y - a.camera.y);
+                        a.ctx.lineTo(this.bodies[i].min.x - a.camera.x, this.bodies[i].min.y - a.camera.y);
+
+                        a.ctx.moveTo((this.bodies[i].min.x + this.bodies[i].max.x) / 2 - a.camera.x, (this.bodies[i].min.y + this.bodies[i].max.y) / 2 - a.camera.y);
+                        a.ctx.lineTo(this.bodies[i].oldPos.x + (this.bodies[i].size.width / 2) - a.camera.x, this.bodies[i].oldPos.y + (this.bodies[i].size.height / 2) - a.camera.y);
+
+                        if (this.bodies[i].isSleeping &amp;&amp; this.allowSleeping) {
+                            a.ctx.strokeStyle = "#0000ff";
+                        } else {
+                            a.ctx.strokeStyle = "#ff0000";
+
+                        }
+
+                        a.ctx.stroke();
+                    }
+
+
+
+                }
+
+            }
+
+            this.render(a);
+        },
+
+        /**
+         * Add a object to the engine.
+         * @method HYPER.Physics.BoxJS.Engine.addBody
+         * @param {object} box - Add a AABB box, or a sprite with physics enabled.
+         */
+
+        addBody: function (box) {
+            if (box.type === "sprite") {
+                this.bodies.push(box.body);
+                this.length++;
+            } else if (box.type === "group") {
+                for (let i = 0; i &lt; box.group.length; i++) {
+                    this.bodies.push(box.group[i].body);
+                    this.length++;
+                }
+                box.physics = "BoxAABB";
+                box.world = this;
+            } else if (box.type === "boxJSAABB") {
+                this.bodies.push(box);
+                this.length++;
+            }
+
+        },
+
+        /**
+         * Remove a object from the engine.
+         * @method HYPER.Physics.BoxJS.Engine.removeBody
+         * @param {object} box - Add a AABB box, or a sprite with physics enabled.
+         */
+
+        removeBody: function (box) {
+            for (let i = 0; i &lt; this.bodies.length; i++) {
+                if (this.bodies[i] === box) {
+                    this.bodies.splice(i, 1);
+                    this.length--;
+                }
+            }
+        },
+
+    };
+
+    /**
+     * Enable a sprite for physics.
+     * @method HYPER.Physics.BoxJS.enable
+     * @param {HYPER.Sprite} sprite First box to collide.
+     */
+
+    HYPER.Physics.BoxJS.enable = function (sprite, physicsDATA) {
+        if (sprite.type === "sprite") {
+            physicsDATA = physicsDATA || {};
+            physicsDATA.x = physicsDATA.x || sprite.x || 0;
+            physicsDATA.y = physicsDATA.y || sprite.y || 0;
+            physicsDATA.width = physicsDATA.width || sprite.width;
+            physicsDATA.height = physicsDATA.height || sprite.height;
+            physicsDATA.center = {
+                x: sprite.rotX || physicsDATA.width / 2,
+                y: sprite.rotY || physicsDATA.height / 2
+            };
+            physicsDATA.angularPos = sprite.angle || 0;
+            sprite.body = new HYPER.Physics.BoxJS.Box(physicsDATA);
+        }
+        if (sprite.type === "group") {
+            for (let i = 0; i &lt; sprite.group.length; i++) {
+                physicsDATA = physicsDATA || {};
+                physicsDATA.x = physicsDATA.x || sprite.group[i].x || 0;
+                physicsDATA.y = physicsDATA.y || sprite.group[i].y || 0;
+                physicsDATA.width = physicsDATA.width || sprite.group[i].width;
+                physicsDATA.height = physicsDATA.height || sprite.group[i].height;
+                physicsDATA.center = {
+                    x: sprite.group[i].rotX || physicsDATA.width / 2,
+                    y: sprite.group[i].rotY || physicsDATA.height / 2
+                };
+                physicsDATA.angularPos = sprite.angle || 0;
+                sprite.group[i].body = new AABB(physicsDATA);
+            }
+            sprite.physics = "BoxAABB";
+        }
+
+    };
+
+})();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HYPER.Audio.Howl.html">Howl</a></li><li><a href="HYPER.Audio.HowlerGlobal.html">HowlerGlobal</a></li><li><a href="HYPER.Audio.Sound.html">Sound</a></li><li><a href="HYPER.Button.html">Button</a></li><li><a href="HYPER.Graphics.Animation.html">Animation</a></li><li><a href="HYPER.Graphics.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Graphics.Draw.html">Draw</a></li><li><a href="HYPER.Graphics.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Graphics.Style.html">Style</a></li><li><a href="HYPER.Group.html">Group</a></li><li><a href="HYPER.Layer.html">Layer</a></li><li><a href="HYPER.Particle.Emitter.html">Emitter</a></li><li><a href="HYPER.Particle.Particle.html">Particle</a></li><li><a href="HYPER.Physics.BoxJS.Box.html">Box</a></li><li><a href="HYPER.Physics.BoxJS.Engine.html">Engine</a></li><li><a href="HYPER.Physics.BoxJS.material.html">material</a></li><li><a href="HYPER.Physics.BoxJS.Vector2.html">Vector2</a></li><li><a href="HYPER.Preload.Audio.html">Audio</a></li><li><a href="HYPER.Preload.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Preload.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Screen.html">Screen</a></li><li><a href="HYPER.Sprite.html">Sprite</a></li><li><a href="HYPER.State.html">State</a></li></ul><h3>Namespaces</h3><ul><li><a href="HYPER.html">HYPER</a></li><li><a href="HYPER.Graphics.html">Graphics</a></li><li><a href="HYPER.Input.html">Input</a></li><li><a href="HYPER.Input.Keys.html">Keys</a></li><li><a href="HYPER.Input.Pointer.html">Pointer</a></li><li><a href="HYPER.Math.html">Math</a></li><li><a href="HYPER.Particle.html">Particle</a></li><li><a href="HYPER.Physics.html">Physics</a></li><li><a href="HYPER.Physics.BoxJS.html">BoxJS</a></li><li><a href="HYPER.Physics.Vector.html">Vector</a></li><li><a href="HYPER.Preload.html">Preload</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mobileAndTabletcheck">mobileAndTabletcheck</a></li><li><a href="global.html#no0p">no0p</a></li><li><a href="global.html#setFPS">setFPS</a></li><li><a href="global.html#Timer">Timer</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Tue Oct 11 2016 22:18:14 GMT-0700 (US Mountain Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

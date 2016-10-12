@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Physics/mesh.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Physics/mesh.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>(function () {
+    "use strict";
+    /**
+      Create types of material for physics engine.
+     */
+    HYPER.Physics.Material = function (e) {
+        e = e || {};
+        /**
+          ID of object 
+         */
+        this._ID = "material " + Math.random() + "" + Math.random();
+        /**
+          friction of object when moving.
+         */
+        this.dynamicFriction = e.dynamicFriction || e.friction || 0;
+        /**
+          friction of object when still.
+         */
+        this.staticFriction = e.staticFriction || e.friction || 0;
+        /**
+          How bouncy an object is.
+         */
+        this.bounciness = e.bounciness || 0;
+        /**
+          What other Physics Matearials this one will interact with.
+         */
+        this.interact = e.interact || "all";
+        /**
+          What other Physics Matearials this one will exclude from interacting with.
+         */
+        this.exclude = e.exclude || "none";
+        return this;
+    };
+
+    /**
+      Create a mesh for physics engine.
+     */
+
+    HYPER.Physics.Mesh = function (vertices, center, physicsMaterial) {
+
+        /**
+          ID of object 
+         */
+        this._ID = "mesh " + Math.random() + "" + Math.random();
+        if (vertices) {
+            /**
+              vertices of object;
+             */
+            this.vertices = vertices;
+        } else {
+            console.error("Please define 'Vertices'");
+        }
+        if (e.center) {
+            /**
+              center of mass of the object;
+             */
+            this.center = e.center;
+        } else {
+            var avrageCenter = HYPER.Physics.Vector.create(0, 0);
+            for (let i = 0; i &lt; this.vertices.length; i++) {
+                avrageCenter = HYPER.Physics.Vector.add(avrageCenter, this.vertices[i]);
+            }
+            /**
+              center of mass of the object;
+             */
+            this.center = avrageCenter / this.vertices.length;
+        }
+        physicsMaterial = physicsMaterial || {};
+        if (physicsMaterial._ID.split(" ") === "material") {
+            /**
+              What type of physics matearial this mesh interacts with.
+             */
+            this.physicsMaterial = physicsMaterial;
+        } else {
+            /**
+              What type of physics matearial this mesh interacts with.
+             */
+            this.physicsMaterial = HYPER.Physics.Material(physicsMaterial);
+        }
+        return this;
+
+    };
+    HYPER.Physics.Mesh = function (e) {
+        e = e || {};
+        /**
+          ID of object 
+         */
+        this._ID = "mesh " + Math.random() + "" + Math.random();
+        if (e.vertices) {
+            /**
+              vertices of object;
+             */
+            this.vertices = e.vertices;
+        } else {
+            console.error("Please define 'Vertices'");
+        }
+        if (e.center) {
+            /**
+              center of mass of the object;
+             */
+            this.center = e.center;
+        } else {
+            var avrageCenter = HYPER.Physics.Vector.create(0, 0);
+            for (let i = 0; i &lt; this.vertices.length; i++) {
+                avrageCenter = HYPER.Physics.Vector.add(avrageCenter, this.vertices[i]);
+            }
+            /**
+              center of mass of the object;
+             */
+            this.center = avrageCenter / this.vertices.length;
+        }
+        e.physicsMaterial = e.physicsMaterial || {};
+        if (physicsMaterial._ID.split(" ") === "material") {
+            /**
+              What type of physics matearial this mesh interacts with.
+             */
+            this.physicsMaterial = e.physicsMaterial;
+        } else {
+            /**
+              What type of physics matearial this mesh interacts with.
+             */
+            this.physicsMaterial = HYPER.Physics.Material(e.physicsMaterial);
+        }
+        this.radius;
+        return this;
+    };
+
+
+
+})();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HYPER.Audio.html">Audio</a></li><li><a href="HYPER.Graphics.Animation.html">Animation</a></li><li><a href="HYPER.Physics.html">Physics</a></li><li><a href="HYPER.html#.Preload">Preload</a></li></ul><h3>Namespaces</h3><ul><li><a href="HYPER.html">HYPER</a></li><li><a href="HYPER.Graphics.html">Graphics</a></li></ul><h3>Global</h3><ul><li><a href="global.html#no0p">no0p</a></li><li><a href="global.html#onload">onload</a></li><li><a href="global.html#setFPS">setFPS</a></li><li><a href="global.html#SpriteSheet">SpriteSheet</a></li><li><a href="global.html#Timer">Timer</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Wed Sep 14 2016 14:52:01 GMT-0700 (US Mountain Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

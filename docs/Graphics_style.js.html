@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Graphics/style.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Graphics/style.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>(function () {
+    "use strict";
+
+
+    /**
+     * Create a new style object.
+     * @class HYPER.Graphics.Style
+     * @param {object} e Object to pass all style info.
+     * @param {object} e.alpha=1 The alpha value to be rendered.
+     * @param {object} e.color="#000000" The fill color value to be rendered.
+     * @param {number} e.linecap="butt" The line cap type to be rendered.
+     * @param {number} e.linejoin="miter" The line join type to be rendered.
+     * @param {number} e.miterLimit=10 The miter limit to be rendered.
+     * @param {number} e.strokeColor="#000000" Stroke color to be rendered.
+     * @param {number} e.lineWidth=1  Line width of the line to be rendered.
+     * @param {number} e.fill=true Should the graphicl objects be filled?
+     * @param {number} e.stroke=false Should the graphicl objects be stroked?
+     * @param {number} e.lineDashOffset=0 What should the dashed offset be?
+     * @param {number} e.fontSize=12 What should the font size be?
+     * @param {number} e.fontFamily="Arial" What should the font family be?
+     * @param {number} e.globalCompositeOperation="source-over" Set the global compisit opperation.
+     * @param {number} e.shadow Set the shadow properties.
+     * @param {number} e.shadow.color="#000000" Set the shadow color.
+     * @param {number} e.shadow.blur=0 Set the shadow blur.
+     * @param {number} e.shadow.offsetX=0 Set the shadow offset x.
+     * @param {number} e.shadow.offsetY=0 Set the shadow offset y.
+     */
+    HYPER.Graphics.Style = function (e) {
+        e = (typeof e === 'undefined') ? {} : e;
+        e.shadow = e.shadow || {};
+
+        /**
+         * @property {string} _ID - The specific ID for this object.
+         */
+
+        this._ID = "style " + Math.random() + "" + Math.random();
+
+        /**
+         * @property {string} type - What type of object this is.
+         */
+
+        this.type = "style";
+
+        /**
+         * @property {number} alpha=1 - The alpha value to be rendered.
+         */
+
+        this.alpha = (typeof e.alpha === 'undefined') ? 1 : e.alpha;
+
+        /**
+         * @property {string} color="#000000" - The fill color value to be rendered.
+         */
+
+        this.color = (typeof e.color === 'undefined') ? "#000000" : e.color;
+
+        /**
+         * @property {string} linecap="butt" - The line cap type to be rendered.
+         */
+
+        this.linecap = (typeof e.linecap === 'undefined') ? "butt" : e.linecap;
+
+        /**
+         * @property {string} linejoin="miter" - The line join type to be rendered.
+         */
+
+        this.linejoin = (typeof e.linejoin === 'undefined') ? "miter" : e.linejoin;
+
+        /**
+         * @property {number} miterLimit=10 - The miter limit to be rendered.
+         */
+
+        this.miterLimit = (typeof e.miterLimit === 'undefined') ? 10 : e.miterLimit;
+
+        /**
+         * @property {number} strokeColor="#000000" - Stroke color to be rendered.
+         */
+
+        this.strokeColor = (typeof e.strokeColor === 'undefined') ? "#000000" : e.strokeColor;
+
+        /**
+         * @property {number} lineWidth=1 - Line width of the line to be rendered.
+         */
+
+        this.lineWidth = (typeof e.lineWidth === 'undefined') ? 1 : e.lineWidth;
+
+        /**
+         * @property {boolean} fill=true - Should the graphicl objects be filled?
+         */
+
+        this.fill = (typeof e.fill === 'undefined') ? true : e.fill;
+
+        /**
+         * @property {boolean} stroke=false - Should the graphicl objects be stroked?
+         */
+
+        this.stroke = (typeof e.stroke === 'undefined') ? false : e.stroke;
+
+        /**
+         * @property {number} lineDashOffset=0 - What should the dashed offset be?
+         */
+
+        this.lineDashOffset = (typeof e.lineDashOffset === 'undefined') ? 0 : e.lineDashOffset;
+
+        /**
+         * @property {number} fontSize=12 - What should the font size be?
+         */
+
+        this.fontSize = (typeof e.fontSize === 'undefined') ? 12 : e.fontSize;
+
+        /**
+         * @property {string} fontSize="Arial" - What should the font family be?
+         */
+
+        this.fontFamily = (typeof e.fontFamily === 'undefined') ? "Arial" : e.fontFamily;
+
+        /**
+         * @property {string} globalCompositeOperation="source-over" - Set the global compisit opperation.
+         */
+
+        this.globalCompositeOperation = (typeof e.globalCompositeOperation === 'undefined') ? "source-over" : e.globalCompositeOperation;
+
+        /**
+         * @property {object} shadow - Set the shadow properties.
+         */
+
+        this.shadow = e.shadow;
+
+        /**
+         * @property {string} shadow.color="#000000" - Set the shadow color.
+         */
+
+        this.shadow.color = (typeof e.shadow.color === 'undefined') ? "#000000" : e.shadow.color;
+
+        /**
+         * @property {string} shadow.blur=0 - Set the shadow blur.
+         */
+
+        this.shadow.blur = (typeof e.shadow.blur === 'undefined') ? 0 : e.shadow.blur;
+
+        /**
+         * @property {string} shadow.offsetX=0 - Set the shadow offset x.
+         */
+
+        this.shadow.offsetX = (typeof e.shadow.offsetX === 'undefined') ? 0 : e.shadow.offsetX;
+
+        /**
+         * @property {string} shadow.offsetY=0 - Set the shadow offset y.
+         */
+
+        this.shadow.offsetY = (typeof e.shadow.offsetY === 'undefined') ? 0 : e.shadow.offsetY;
+
+    };
+    
+    HYPER.Graphics.Style.prototype = {
+        /**
+         * Apply this style to any context.
+         * @method HYPER.Graphics.Style.applyTo
+         * @param {object} ctx Context for the style.
+         */
+        applyTo: function (ctx) {
+            HYPER.Graphics.styleToCTX(this, ctx);
+        },
+    };
+    /**
+     * Apply a style to any context.
+     * @method HYPER.Graphics.styleToCTX
+     * @param {HYPER.Graphics.Style} style Style to apply.
+     * @param {object} ctx Context for the style.
+     */
+    HYPER.Graphics.styleToCTX = function (style, ctx) {
+        ctx.globalAlpha = style.alpha || 1;
+        ctx.fillStyle = style.color || "#000000";
+        ctx.lineCap = style.lineCap || "butt";
+        ctx.linejoin = style.linejoin || "miter";
+        ctx.miterLimit = style.miterLimit || 10;
+        ctx.strokeStyle = style.strokeColor || "#000000";
+        ctx.lineWidth = style.lineWidth || 1;
+        ctx.lineDashOffset = style.lineDashOffset || 0;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+        ctx.font = style.fontSize || 12 + "px " + style.fontFamily || "Arial";
+        ctx.globalCompositeOperation = style.globalCompositeOperation || "source-over";
+        ctx.shadowColor = style.shadow.color || "#000000";
+        ctx.shadowBlur = style.shadow.blur || 0;
+        ctx.shadowOffsetX = style.shadow.offsetX || 0;
+        ctx.shadowOffsetY = style.shadow.offsetY || 0;
+    };
+    HYPER.Graphics.DEFAULT_STYLE = new HYPER.Graphics.Style();
+})();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HYPER.Audio.Howl.html">Howl</a></li><li><a href="HYPER.Audio.HowlerGlobal.html">HowlerGlobal</a></li><li><a href="HYPER.Audio.Sound.html">Sound</a></li><li><a href="HYPER.Button.html">Button</a></li><li><a href="HYPER.Graphics.Animation.html">Animation</a></li><li><a href="HYPER.Graphics.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Graphics.Draw.html">Draw</a></li><li><a href="HYPER.Graphics.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Graphics.Style.html">Style</a></li><li><a href="HYPER.Group.html">Group</a></li><li><a href="HYPER.Layer.html">Layer</a></li><li><a href="HYPER.Particle.Emitter.html">Emitter</a></li><li><a href="HYPER.Particle.Particle.html">Particle</a></li><li><a href="HYPER.Physics.BoxJS.Box.html">Box</a></li><li><a href="HYPER.Physics.BoxJS.Engine.html">Engine</a></li><li><a href="HYPER.Physics.BoxJS.material.html">material</a></li><li><a href="HYPER.Physics.BoxJS.Vector2.html">Vector2</a></li><li><a href="HYPER.Preload.Audio.html">Audio</a></li><li><a href="HYPER.Preload.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Preload.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Screen.html">Screen</a></li><li><a href="HYPER.Sprite.html">Sprite</a></li><li><a href="HYPER.State.html">State</a></li></ul><h3>Namespaces</h3><ul><li><a href="HYPER.html">HYPER</a></li><li><a href="HYPER.Graphics.html">Graphics</a></li><li><a href="HYPER.Input.html">Input</a></li><li><a href="HYPER.Input.Keys.html">Keys</a></li><li><a href="HYPER.Input.Pointer.html">Pointer</a></li><li><a href="HYPER.Math.html">Math</a></li><li><a href="HYPER.Particle.html">Particle</a></li><li><a href="HYPER.Physics.html">Physics</a></li><li><a href="HYPER.Physics.BoxJS.html">BoxJS</a></li><li><a href="HYPER.Physics.Vector.html">Vector</a></li><li><a href="HYPER.Preload.html">Preload</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mobileAndTabletcheck">mobileAndTabletcheck</a></li><li><a href="global.html#no0p">no0p</a></li><li><a href="global.html#setFPS">setFPS</a></li><li><a href="global.html#Timer">Timer</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Tue Oct 11 2016 22:18:12 GMT-0700 (US Mountain Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
