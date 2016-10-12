@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Physics/collisionTesting.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Physics/collisionTesting.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>(function () {
+    "use strict";
+
+    var distX = 0;
+    var distY = 0;
+    var dx = 0;
+    var dy = 0;
+    var x = 0;
+    var y = 0;
+
+    /**
+     * Check a collision between 2 aabb objects
+     * @method HYPER.Physics.checkAABBCollision
+     * @param {object} obj1 - First object to be checked.
+     * @param {object} obj2 - Second object to be checked.
+     */
+
+    HYPER.Physics.checkAABBCollision = function (obj1, obj2) {
+        var mesh1 = {},
+            mesh2 = {};
+
+        mesh1 = obj1;
+        mesh2 = obj2;
+
+        if (mesh1.x &lt;= mesh2.x + mesh2.size.width &amp;&amp; mesh1.x + mesh1.size.width >= mesh2.x &amp;&amp;
+            mesh1.y &lt;= mesh2.y + mesh2.size.height &amp;&amp; mesh1.y + mesh1.size.height > mesh2.y) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Check a collision between 2 circular objects
+     * @method HYPER.Physics.checkCircleCollision
+     * @param {object} circle1 - First object to be checked.
+     * @param {object} circle2 - Second object to be checked.
+     */
+
+    HYPER.Physics.checkCircleCollision = function (circle1, circle2) {
+        if (Math.sqrt((circle1.x - circle2.x) * (circle1.x - circle2.x) + (circle1.y - circle2.y) * (circle1.y - circle2.y)) &lt; circle1.size.radius + circle2.size.radius) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Check a collision between a AABB and a circle object.
+     * @method HYPER.Physics.checkCircleAABBCollision
+     * @param {object} circle - First object to be checked.
+     * @param {object} rect - Second object to be checked.
+     */
+
+    HYPER.Physics.checkCircleAABBCollision = function (circle, rect) {
+        distX = Math.abs(circle.x - rect.x - rect.size.width / 2);
+        distY = Math.abs(circle.y - rect.y - rect.size.height / 2);
+
+        if (distX > (rect.size.width / 2 + circle.size.radius)) {
+            return false;
+        }
+        if (distY > (rect.size.height / 2 + circle.size.radius)) {
+            return false;
+        }
+
+        if (distX &lt;= (rect.size.width / 2)) {
+            return true;
+        }
+        if (distY &lt;= (rect.size.height / 2)) {
+            return true;
+        }
+
+        dx = distX - rect.size.width / 2;
+        dy = distY - rect.size.height / 2;
+        return (dx * dx + dy * dy &lt;= (circle.size.radius * circle.size.radius));
+    }
+
+    /**
+     * Check a collision between a point and an AABB object.
+     * @method HYPER.Physics.checkPointAABBCollision
+     * @param {object} point - First object to be checked.
+     * @param {object} rect - Second object to be checked.
+     */
+
+    HYPER.Physics.checkPointAABBCollision = function (point, rect) {
+        if (point.x >= rect.x &amp;&amp;
+            point.x &lt;= rect.x + rect.size.width &amp;&amp;
+            point.y >= rect.y &amp;&amp;
+            point.y &lt;= rect.y + rect.size.height) {
+            return true;
+        } else {
+            return false;
+        };
+    };
+
+    /**
+     * Check a collision between a point and an circle object.
+     * @method HYPER.Physics.checkPointCircleCollision
+     * @param {object} point - First object to be checked.
+     * @param {object} circle - Second object to be checked.
+     */
+
+    HYPER.Physics.checkPointCircleCollision = function (point, circle) {
+        if (Math.sqrt((circle.x - point.x) * (circle.x - point.x) + (circle.y - point.y) * (circle.y - point.y)) &lt;= circle.size.radius) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    /**
+     * Check a collision between 2 point objects.
+     * @method HYPER.Physics.checkPointPointCollision
+     * @param {object} point1 - First object to be checked.
+     * @param {object} point2 - Second object to be checked.
+     */
+
+    HYPER.Physics.checkPointPointCollision = function (point1, point2) {
+        if (Math.floor(point1.x) === Math.floor(point2.x) &amp;&amp; Math.floor(point2.x) === Math.floor(point2.x)) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    /**
+     * Check a collision between 2 objects.
+     * @method HYPER.Physics.checkCollision
+     * @param {object} obj1 - First object to be checked.
+     * @param {object} obj2 - Second object to be checked.
+     */
+
+    HYPER.Physics.checkCollision = function (obj1, obj2) {
+        var obj1type, obj2type;
+        if (!obj1.size) {
+            obj1type = "point";
+        }
+        if (!obj1.shape === "circle") {
+            obj1type = "circle";
+        }
+        if (!obj1.shape === "rect") {
+            obj1type = "rect";
+        }
+        if (!obj2.size) {
+            obj2type = "point";
+        }
+        if (!obj2.shape === "circle") {
+            obj2type = "circle";
+        }
+        if (!obj2.shape === "rect") {
+            obj2type = "rect";
+        }
+
+        if (obj1type === "point") {
+            if (obj2type === "point") {
+                return HYPER.Physics.checkPointPointCollision(obj1, obj2);
+            }
+            if (obj2type === "circle") {
+                return HYPER.Physics.checkPointCircleCollision(obj1, obj2);
+            }
+            if (obj2type === "rect") {
+                return HYPER.Physics.checkPointAABBCollision(obj1, obj2);
+            }
+        }
+        if (obj1type === "rect") {
+            if (obj2type === "rect") {
+                return HYPER.Physics.checkAABBCollision(obj1, obj2);
+            }
+            if (obj2type === "circle") {
+                return HYPER.Physics.checkCircleAABBCollision(obj2, obj1);
+            }
+            if (obj2type === "point") {
+                return HYPER.Physics.checkPointAABBCollision(obj2, obj1);
+            }
+        }
+        if (obj1type === "circle") {
+            if (obj2type === "rect") {
+                return HYPER.Physics.checkCircleAABBCollision(obj1, obj2);
+            }
+            if (obj2type === "circle") {
+                return HYPER.Physics.checkCircleCircleCollision(obj2, obj1);
+            }
+            if (obj2type === "point") {
+                return HYPER.Physics.checkPointCircleCollision(obj2, obj1);
+            }
+        }
+
+    }
+
+})();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HYPER.Audio.Howl.html">Howl</a></li><li><a href="HYPER.Audio.HowlerGlobal.html">HowlerGlobal</a></li><li><a href="HYPER.Audio.Sound.html">Sound</a></li><li><a href="HYPER.Button.html">Button</a></li><li><a href="HYPER.Graphics.Animation.html">Animation</a></li><li><a href="HYPER.Graphics.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Graphics.Draw.html">Draw</a></li><li><a href="HYPER.Graphics.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Graphics.Style.html">Style</a></li><li><a href="HYPER.Group.html">Group</a></li><li><a href="HYPER.Layer.html">Layer</a></li><li><a href="HYPER.Particle.Emitter.html">Emitter</a></li><li><a href="HYPER.Particle.Particle.html">Particle</a></li><li><a href="HYPER.Physics.BoxJS.Box.html">Box</a></li><li><a href="HYPER.Physics.BoxJS.Engine.html">Engine</a></li><li><a href="HYPER.Physics.BoxJS.material.html">material</a></li><li><a href="HYPER.Physics.BoxJS.Vector2.html">Vector2</a></li><li><a href="HYPER.Preload.Audio.html">Audio</a></li><li><a href="HYPER.Preload.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Preload.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Screen.html">Screen</a></li><li><a href="HYPER.Sprite.html">Sprite</a></li><li><a href="HYPER.State.html">State</a></li></ul><h3>Namespaces</h3><ul><li><a href="HYPER.html">HYPER</a></li><li><a href="HYPER.Graphics.html">Graphics</a></li><li><a href="HYPER.Input.html">Input</a></li><li><a href="HYPER.Input.Keys.html">Keys</a></li><li><a href="HYPER.Input.Pointer.html">Pointer</a></li><li><a href="HYPER.Math.html">Math</a></li><li><a href="HYPER.Particle.html">Particle</a></li><li><a href="HYPER.Physics.html">Physics</a></li><li><a href="HYPER.Physics.BoxJS.html">BoxJS</a></li><li><a href="HYPER.Physics.Vector.html">Vector</a></li><li><a href="HYPER.Preload.html">Preload</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mobileAndTabletcheck">mobileAndTabletcheck</a></li><li><a href="global.html#no0p">no0p</a></li><li><a href="global.html#setFPS">setFPS</a></li><li><a href="global.html#Timer">Timer</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Wed Oct 12 2016 14:38:12 GMT-0700 (US Mountain Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
