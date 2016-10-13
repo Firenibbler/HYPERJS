@@ -24,13 +24,13 @@
      * @param {object} e.camera The camera object, change the position and view to change what is shown.
      * @param {number} e.camera.x=0 X location of the camera.
      * @param {number} e.camera.y=0 Y location of the camera.
-     * @param {number} e.camera.width=1280 Width of the camera.
-     * @param {number} e.camera.height=720 Height of the camera.
+     * @param {number} e.camera.width=800 Width of the camera.
+     * @param {number} e.camera.height=600 Height of the camera.
      * @param {object} e.view The view object, change the position and view of the State on the webpage.
      * @param {number} e.view.x=0 X location of the State.
      * @param {number} e.view.y=0 Y location of the State.
-     * @param {number} e.view.width=1280 Width of the State.
-     * @param {number} e.view.height=720 Height of the State.
+     * @param {number} e.view.width=800 Width of the State.
+     * @param {number} e.view.height=600 Height of the State.
      */
 
     HYPER.State = function (e) {
@@ -148,11 +148,11 @@
             /**
              * @property {number} camera.width - Width of the camera.
              */
-            width: e.camera.width || 1280,
+            width: e.camera.width || 800,
             /**
              * @property {number} camera.height - Height of the camera.
              */
-            height: e.camera.height || 720,
+            height: e.camera.height || 600,
         };
 
 
@@ -172,11 +172,11 @@
             /**
              * @property {number} view.width - Width on the screen.
              */
-            width: e.view.width || 1280,
+            width: e.view.width || 800,
             /**
              * @property {number} view.height - Height on the screen.
              */
-            height: e.view.height || 720,
+            height: e.view.height || 600,
         };
 
         /**

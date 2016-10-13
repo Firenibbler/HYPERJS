@@ -13,7 +13,7 @@ var gameState = new HYPER.State({
 
     },
     // on every click
-    onHold: function (info) {
+    onClick: function (info) {
         starGroup.create({
             
             // Set position th the mouse position
