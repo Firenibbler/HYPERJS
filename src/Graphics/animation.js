@@ -89,7 +89,7 @@
          * @property {number} _then - Previous time.
          */
 
-        this._then = Date.now();
+        this._then = HYPER.CURRENT_DATE;
 
         /**
          * @private
@@ -175,7 +175,7 @@
          */
 
         _update: function (a) {
-            this._now = Date.now();
+            this._now = HYPER.CURRENT_DATE;
             this._delta = this._now - this._then;
             if (this._delta > this._interval) {
                 this._then = this._now - (this._delta % this._interval);

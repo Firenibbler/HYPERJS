@@ -51,7 +51,7 @@
 
         getHold: function (ID) {
             ID = ID || 0;
-            return this.point[ID].click;
+            return this.point[ID].held;
         },
 
         /**
@@ -62,7 +62,7 @@
 
         getUp: function (ID) {
             ID = ID || 0;
-            return this.point[ID].click;
+            return this.point[ID].up;
         },
 
         /**
@@ -73,7 +73,7 @@
 
         getDown: function (ID) {
             ID = ID || 0;
-            return this.point[ID].click;
+            return this.point[ID].down;
         },
 
         /**
@@ -84,10 +84,7 @@
 
         getPosition: function (ID) {
             ID = ID || 0;
-            return {
-                x: this.point[ID].x,
-                y: this.point[ID].y,
-            };
+            return this.point[ID]
         },
 
         /**
@@ -880,7 +877,7 @@
     HYPER.Input._addEventListeners = function () {
 
         // check to see if mobile.
-        if (mobileAndTabletcheck()) {
+        if (mobileAndTabvarcheck()) {
             // Init the touchmove listener
             document.addEventListener("touchmove", HYPER.Input.Pointer._listeners.touchmove);
             // Init the touchstart listener
@@ -913,11 +910,75 @@
     HYPER.Input.addScreen = function (screen) {
         HYPER.Input.screens.push(screen);
     };
+
+
+    HYPER.Input.updateInput = function () {
+        for (var i = 0; i < 10; i++) {
+            HYPER.Input.Pointer.point[i].x = HYPER.Input.Pointer.point[i]._x;
+            HYPER.Input.Pointer.point[i].y = HYPER.Input.Pointer.point[i]._y;
+            HYPER.Input.Pointer.point[i].up = HYPER.Input.Pointer.point[i]._up;
+            HYPER.Input.Pointer.point[i].down = HYPER.Input.Pointer.point[i]._down;
+            HYPER.Input.Pointer.point[i].hold = HYPER.Input.Pointer.point[i]._hold;
+            HYPER.Input.Pointer.point[i].dblclick = HYPER.Input.Pointer.point[i]._dblclick;
+            HYPER.Input.Pointer.point[i].click = HYPER.Input.Pointer.point[i]._up;
+
+
+            HYPER.Input.Pointer.point[i]._up = false;
+            HYPER.Input.Pointer.point[i]._down = false;
+            HYPER.Input.Pointer.point[i]._dblclick = false;
+
+            for (var s = 0; s < HYPER.Input.screens.length; s++) {
+                if (HYPER.Input.Pointer.point[i].click) {
+                    HYPER.Input.screens[s]._onClick(i);
+                }
+                if (HYPER.Input.Pointer.point[i].up) {
+                    HYPER.Input.screens[s]._onUp(i);
+                }
+                if (HYPER.Input.Pointer.point[i].down) {
+
+                    HYPER.Input.screens[s]._onDown(i);
+
+                }
+                if (HYPER.Input.Pointer.point[i].hold) {
+                    HYPER.Input.screens[s]._onHold(i);
+                }
+                if (HYPER.Input.Pointer.point[i].dblclick) {
+                    HYPER.Input.screens[s]._onDblClick(i);
+                }
+            }
+
+        };
+        for (var i = 0; i < 222; i++) {
+            HYPER.Input.Keys.key[i].up = HYPER.Input.Keys.key[i]._up;
+            HYPER.Input.Keys.key[i].down = HYPER.Input.Keys.key[i]._down;
+            HYPER.Input.Keys.key[i].hold = HYPER.Input.Keys.key[i]._hold;
+
+            HYPER.Input.Keys.key[i]._up = false;
+            HYPER.Input.Keys.key[i]._down = false;
+
+
+            for (var s = 0; s < HYPER.Input.screens.length; s++) {
+                if (HYPER.Input.Keys.key[i].up) {
+                    HYPER.Input.screens[s]._onKeyUp(HYPER.Input.Keys.getKeyFromID(i));
+                }
+                if (HYPER.Input.Keys.key[i].down) {
+                    HYPER.Input.screens[s]._onKeyDown(HYPER.Input.Keys.getKeyFromID(i));
+                }
+                if (HYPER.Input.Keys.key[i].hold) {
+                    HYPER.Input.screens[s]._onKeyHeld(HYPER.Input.Keys.getKeyFromID(i));
+                }
+            }
+
+        };
+
+    };
+
+
     /**
       Initilize the Input module. 
      */
     HYPER.Input.init = function () {
-        for (let i = 0; i < 10; i++) {
+        for (var i = 0; i < 10; i++) {
             HYPER.Input.Pointer.point[i] = {
                 x: 0,
                 y: 0,
@@ -934,7 +995,7 @@
                 _dblclick: false,
             };
         };
-        for (let i = 0; i < 300; i++) {
+        for (var i = 0; i < 300; i++) {
             if (!HYPER.Input.Keys.key[i]) {
                 HYPER.Input.Keys.key[i] = {
                     _up: false,
@@ -956,67 +1017,9 @@
         };
         HYPER.Input._addEventListeners();
 
-        function updateInput() {
-            for (let i = 0; i < 10; i++) {
-                HYPER.Input.Pointer.point[i].x = HYPER.Input.Pointer.point[i]._x;
-                HYPER.Input.Pointer.point[i].y = HYPER.Input.Pointer.point[i]._y;
-                HYPER.Input.Pointer.point[i].up = HYPER.Input.Pointer.point[i]._up;
-                HYPER.Input.Pointer.point[i].down = HYPER.Input.Pointer.point[i]._down;
-                HYPER.Input.Pointer.point[i].hold = HYPER.Input.Pointer.point[i]._hold;
-                HYPER.Input.Pointer.point[i].dblclick = HYPER.Input.Pointer.point[i]._dblclick;
-                HYPER.Input.Pointer.point[i].click = HYPER.Input.Pointer.point[i]._up;
 
 
-                HYPER.Input.Pointer.point[i]._up = false;
-                HYPER.Input.Pointer.point[i]._down = false;
-                HYPER.Input.Pointer.point[i]._dblclick = false;
-
-                for (let s = 0; s < HYPER.Input.screens.length; s++) {
-                    if (HYPER.Input.Pointer.point[i].click) {
-                        HYPER.Input.screens[s]._onClick(i);
-                    }
-                    if (HYPER.Input.Pointer.point[i].up) {
-                        HYPER.Input.screens[s]._onUp(i);
-                    }
-                    if (HYPER.Input.Pointer.point[i].down) {
-
-                        HYPER.Input.screens[s]._onDown(i);
-
-                    }
-                    if (HYPER.Input.Pointer.point[i].hold) {
-                        HYPER.Input.screens[s]._onHold(i);
-                    }
-                    if (HYPER.Input.Pointer.point[i].dblclick) {
-                        HYPER.Input.screens[s]._onDblClick(i);
-                    }
-                }
-
-            };
-            for (let i = 0; i < 300; i++) {
-                HYPER.Input.Keys.key[i].up = HYPER.Input.Keys.key[i]._up;
-                HYPER.Input.Keys.key[i].down = HYPER.Input.Keys.key[i]._down;
-                HYPER.Input.Keys.key[i].hold = HYPER.Input.Keys.key[i]._hold;
-
-                HYPER.Input.Keys.key[i]._up = false;
-                HYPER.Input.Keys.key[i]._down = false;
-
-
-                for (let s = 0; s < HYPER.Input.screens.length; s++) {
-                    if (HYPER.Input.Keys.key[i].up) {
-                        HYPER.Input.screens[s]._onKeyUp(HYPER.Input.Keys.getKeyFromID(i));
-                    }
-                    if (HYPER.Input.Keys.key[i].down) {
-                        HYPER.Input.screens[s]._onKeyDown(HYPER.Input.Keys.getKeyFromID(i));
-                    }
-                    if (HYPER.Input.Keys.key[i].hold) { HYPER.Input.screens[s]._onKeyHeld(HYPER.Input.Keys.getKeyFromID(i));
-                    }
-                }
-
-            };
-
-        };
-
-        HYPER.Timer.addOnTick(updateInput);
+        HYPER.Timer.addOnTick(HYPER.Input.updateInput);
 
     };
 })();

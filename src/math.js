@@ -16,7 +16,7 @@
          */
 
         getAllArray: function (array, todo) {
-            for (let i = 0; i < array.length; i++) {
+            for (var i = 0; i < array.length; i++) {
                 todo(i, array[i]);
             }
         },

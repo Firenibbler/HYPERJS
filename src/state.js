@@ -46,6 +46,12 @@
         this._ID = "state " + Math.random() + "" + Math.random();
 
         /**
+         * @property {string} type - TheType of object this is.
+         */
+
+        this.type = "state";
+
+        /**
          * @property {object} style - The style used for this object.
          */
 
@@ -84,7 +90,7 @@
         this._tick = {
             FPS: e.tickFPS || e.tickfps || e.fps || 30,
             _now: 0,
-            _then: Date.now(),
+            _then: HYPER.CURRENT_DATE,
             _interval: 1000 / 30,
             _delta: 0,
         };
@@ -97,7 +103,7 @@
         this._anime = {
             FPS: e.animeFPS || e.animefps || e.fps || 60,
             _now: 0,
-            _then: Date.now(),
+            _then: HYPER.CURRENT_DATE,
             _interval: 1000 / 60,
             _delta: 0,
         };
@@ -317,7 +323,7 @@
          */
 
         removeChild: function (child) {
-            for (let c = 0; c < this.children.length; c++) {
+            for (var c = 0; c < this.children.length; c++) {
                 if (child._ID === this.children[c]._ID) {
                     this.children.splice(c, 1);
                 };
@@ -375,9 +381,9 @@
         _renderChildren: function (a) {
             if (this.enableZindex === true) {
                 // Loop through all z-indexes
-                for (let z = 0; z < this.children.length; z++) {
+                for (var z = 0; z < this.children.length; z++) {
                     // Loop through all children
-                    for (let i = 0; i < this.children.length; i++) {
+                    for (var i = 0; i < this.children.length; i++) {
                         // Check to see if the z-index is correct.
                         if (Math.round(this.children[i].zIndex) === z) {
                             // Check to see if smart rendering is turned on.
@@ -394,7 +400,7 @@
                 }
             } else {
                 // loop through all children
-                for (let i = 0; i < this.children.length; i++) {
+                for (var i = 0; i < this.children.length; i++) {
                     // Check to see if smart rendering is turned on.
                     if (this.smartRendering === true) {
                         // Check to see if the desplayed object overlaps the screen.
@@ -419,7 +425,7 @@
 
         _updateChildren: function (a) {
             // loop through all children.
-            for (let i = 0; i < this.children.length; i++) {
+            for (var i = 0; i < this.children.length; i++) {
                 //update child
                 this.children[i]._update(this.passedINFO);
 
@@ -546,7 +552,7 @@
 
         _onClick: function (data) {
             this.updatePointerDATA_ID(data, data._ID);
-            for (let i = 0; i < this.children.length; i++) {
+            for (var i = 0; i < this.children.length; i++) {
                 if (this.children[i].alive) {
                     if (this.children[i]._onClick) {
                         this.children[i]._onClick(this.pointerDATA[data._ID]);
@@ -564,7 +570,7 @@
 
         _onUp: function (data) {
             this.updatePointerDATA_ID(data, data._ID);
-            for (let i = 0; i < this.children.length; i++) {
+            for (var i = 0; i < this.children.length; i++) {
                 if (this.children[i].alive) {
                     if (this.children[i]._onUp) {
                         this.children[i]._onUp(this.pointerDATA[data._ID]);
@@ -582,7 +588,7 @@
 
         _onDown: function (data) {
             this.updatePointerDATA_ID(data, data._ID);
-            for (let i = 0; i < this.children.length; i++) {
+            for (var i = 0; i < this.children.length; i++) {
                 if (this.children[i].alive) {
                     if (this.children[i]._onDown) {
                         this.children[i]._onDown(this.pointerDATA[data._ID]);
@@ -600,7 +606,7 @@
 
         _onHold: function (data) {
             this.updatePointerDATA_ID(data, data._ID);
-            for (let i = 0; i < this.children.length; i++) {
+            for (var i = 0; i < this.children.length; i++) {
                 if (this.children[i].alive) {
                     if (this.children[i]._onHold) {
                         this.children[i]._onHold(this.pointerDATA[data._ID]);
@@ -617,7 +623,7 @@
          */
 
         _onDblClick: function (data) {
-            for (let i = 0; i < this.children.length; i++) {
+            for (var i = 0; i < this.children.length; i++) {
                 if (this.children[i].alive) {
                     if (this.children[i]._onDblClick) {
                         this.children[i]._onDblClick(this.pointerDATA[data._ID]);
@@ -634,7 +640,7 @@
          */
 
         _onKeyDown: function (data) {
-            for (let i = 0; i < this.children.length; i++) {
+            for (var i = 0; i < this.children.length; i++) {
                 if (this.children[i].alive) {
                     if (this.children[i]._onKeyDown) {
                         this.children[i]._onKeyDown(data);
@@ -651,14 +657,13 @@
          */
 
         _onKeyHeld: function (data) {
-            for (let i = 0; i < this.children.length; i++) {
+            for (var i = 0; i < this.children.length; i++) {
                 if (this.children[i].alive) {
                     if (this.children[i]._onKeyHeld) {
                         this.children[i]._onKeyHeld(data);
                     }
                 }
             }
-            console.log("hi")
             this.onKeyHeld(data);
         },
 
@@ -669,7 +674,7 @@
          */
 
         _onKeyUp: function (data) {
-            for (let i = 0; i < this.children.length; i++) {
+            for (var i = 0; i < this.children.length; i++) {
                 if (this.children[i].alive) {
                     if (this.children[i]._onKeyUp) {
                         this.children[i]._onKeyUp(data);
@@ -686,7 +691,7 @@
          */
 
         _render: function (a) {
-            this._anime._now = Date.now();
+            this._anime._now = HYPER.CURRENT_DATE;
             this._anime._delta = this._anime._now - this._anime._then;
 
             if (this._anime._delta > this._anime._interval) {
@@ -778,7 +783,7 @@
          */
 
         _update: function (a) {
-            this._tick._now = Date.now();
+            this._tick._now = HYPER.CURRENT_DATE;
             this._tick._delta = this._tick._now - this._tick._then;
             if (this._tick._delta > this._tick._interval) {
                 this._tick._then = this._tick._now - (this._tick._delta % this._tick._interval);
@@ -803,5 +808,5 @@
         },
     };
 
-    
+
 })();

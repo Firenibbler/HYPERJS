@@ -971,12 +971,12 @@
                         DONT_COLLIDE = true;
                     }
 
-                    for (let g = 0; g &lt; b.material.dontCollideWith.length; g++) {
+                    for (var g = 0; g &lt; b.material.dontCollideWith.length; g++) {
                         if (b.material.dontCollideWith[g] === a.material.name &amp;&amp; !DONT_COLLIDE) {
                             DONT_COLLIDE = true;
                         }
                     }
-                    for (let g = 0; g &lt; a.material.dontCollideWith.length; g++) {
+                    for (var g = 0; g &lt; a.material.dontCollideWith.length; g++) {
                         if (a.material.dontCollideWith[g] === b.material.name &amp;&amp; !DONT_COLLIDE) {
                             DONT_COLLIDE = true;
                         }
@@ -1040,7 +1040,7 @@
          */
 
         _update: function (a) {
-            for (let i = 0; i &lt; this.bodies.length; i++) {
+            for (var i = 0; i &lt; this.bodies.length; i++) {
                 this.bodies[i].oldPos.x = this.bodies[i].pos.x;
                 this.bodies[i].oldPos.y = this.bodies[i].pos.y;
 
@@ -1052,7 +1052,7 @@
 
 
 
-            for (let i = 0; i &lt; this.bodies.length; i++) {
+            for (var i = 0; i &lt; this.bodies.length; i++) {
 
                 if (this.bodies[i].pos.x &lt; this.bounds.min.x) {
                     this.bodies[i].pos.x = this.bounds.min.x;
@@ -1085,7 +1085,7 @@
         _render: function (a) {
             if (this.debug) {
                 HYPER.Graphics.styleToCTX(HYPER.Graphics.DEFAULT_STYLE, a.ctx);
-                for (let i = 0; i &lt; this.bodies.length; i++) {
+                for (var i = 0; i &lt; this.bodies.length; i++) {
 
                     if (this.bodies[i].active) {
                         a.ctx.beginPath();
@@ -1129,7 +1129,7 @@
                 this.bodies.push(box.body);
                 this.length++;
             } else if (box.type === "group") {
-                for (let i = 0; i &lt; box.group.length; i++) {
+                for (var i = 0; i &lt; box.group.length; i++) {
                     this.bodies.push(box.group[i].body);
                     this.length++;
                 }
@@ -1149,7 +1149,7 @@
          */
 
         removeBody: function (box) {
-            for (let i = 0; i &lt; this.bodies.length; i++) {
+            for (var i = 0; i &lt; this.bodies.length; i++) {
                 if (this.bodies[i] === box) {
                     this.bodies.splice(i, 1);
                     this.length--;
@@ -1180,7 +1180,7 @@
             sprite.body = new HYPER.Physics.BoxJS.Box(physicsDATA);
         }
         if (sprite.type === "group") {
-            for (let i = 0; i &lt; sprite.group.length; i++) {
+            for (var i = 0; i &lt; sprite.group.length; i++) {
                 physicsDATA = physicsDATA || {};
                 physicsDATA.x = physicsDATA.x || sprite.group[i].x || 0;
                 physicsDATA.y = physicsDATA.y || sprite.group[i].y || 0;
@@ -1208,7 +1208,7 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HYPER.Audio.Howl.html">Howl</a></li><li><a href="HYPER.Audio.HowlerGlobal.html">HowlerGlobal</a></li><li><a href="HYPER.Audio.Sound.html">Sound</a></li><li><a href="HYPER.Button.html">Button</a></li><li><a href="HYPER.Graphics.Animation.html">Animation</a></li><li><a href="HYPER.Graphics.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Graphics.Draw.html">Draw</a></li><li><a href="HYPER.Graphics.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Graphics.Style.html">Style</a></li><li><a href="HYPER.Group.html">Group</a></li><li><a href="HYPER.Layer.html">Layer</a></li><li><a href="HYPER.Particle.Emitter.html">Emitter</a></li><li><a href="HYPER.Particle.Particle.html">Particle</a></li><li><a href="HYPER.Physics.BoxJS.Box.html">Box</a></li><li><a href="HYPER.Physics.BoxJS.Engine.html">Engine</a></li><li><a href="HYPER.Physics.BoxJS.material.html">material</a></li><li><a href="HYPER.Physics.BoxJS.Vector2.html">Vector2</a></li><li><a href="HYPER.Preload.Audio.html">Audio</a></li><li><a href="HYPER.Preload.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Preload.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Screen.html">Screen</a></li><li><a href="HYPER.Sprite.html">Sprite</a></li><li><a href="HYPER.State.html">State</a></li></ul><h3>Namespaces</h3><ul><li><a href="HYPER.html">HYPER</a></li><li><a href="HYPER.Graphics.html">Graphics</a></li><li><a href="HYPER.Input.html">Input</a></li><li><a href="HYPER.Input.Keys.html">Keys</a></li><li><a href="HYPER.Input.Pointer.html">Pointer</a></li><li><a href="HYPER.Math.html">Math</a></li><li><a href="HYPER.Particle.html">Particle</a></li><li><a href="HYPER.Physics.html">Physics</a></li><li><a href="HYPER.Physics.BoxJS.html">BoxJS</a></li><li><a href="HYPER.Physics.Vector.html">Vector</a></li><li><a href="HYPER.Preload.html">Preload</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mobileAndTabletcheck">mobileAndTabletcheck</a></li><li><a href="global.html#no0p">no0p</a></li><li><a href="global.html#setFPS">setFPS</a></li><li><a href="global.html#Timer">Timer</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HYPER.Audio.Howl.html">Howl</a></li><li><a href="HYPER.Audio.HowlerGlobal.html">HowlerGlobal</a></li><li><a href="HYPER.Audio.Sound.html">Sound</a></li><li><a href="HYPER.Button.html">Button</a></li><li><a href="HYPER.Graphics.Animation.html">Animation</a></li><li><a href="HYPER.Graphics.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Graphics.Draw.html">Draw</a></li><li><a href="HYPER.Graphics.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Graphics.Style.html">Style</a></li><li><a href="HYPER.Group.html">Group</a></li><li><a href="HYPER.Layer.html">Layer</a></li><li><a href="HYPER.Particle.Emitter.html">Emitter</a></li><li><a href="HYPER.Particle.Particle.html">Particle</a></li><li><a href="HYPER.Physics.BoxJS.Box.html">Box</a></li><li><a href="HYPER.Physics.BoxJS.Engine.html">Engine</a></li><li><a href="HYPER.Physics.BoxJS.material.html">material</a></li><li><a href="HYPER.Physics.BoxJS.Vector2.html">Vector2</a></li><li><a href="HYPER.Preload.Audio.html">Audio</a></li><li><a href="HYPER.Preload.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Preload.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Screen.html">Screen</a></li><li><a href="HYPER.Sprite.html">Sprite</a></li><li><a href="HYPER.State.html">State</a></li></ul><h3>Namespaces</h3><ul><li><a href="HYPER.html">HYPER</a></li><li><a href="HYPER.Graphics.html">Graphics</a></li><li><a href="HYPER.Input.html">Input</a></li><li><a href="HYPER.Input.Keys.html">Keys</a></li><li><a href="HYPER.Input.Pointer.html">Pointer</a></li><li><a href="HYPER.Math.html">Math</a></li><li><a href="HYPER.Particle.html">Particle</a></li><li><a href="HYPER.Physics.html">Physics</a></li><li><a href="HYPER.Physics.BoxJS.html">BoxJS</a></li><li><a href="HYPER.Physics.Vector.html">Vector</a></li><li><a href="HYPER.Preload.html">Preload</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mobileAndTabvarcheck">mobileAndTabvarcheck</a></li><li><a href="global.html#no0p">no0p</a></li><li><a href="global.html#setFPS">setFPS</a></li><li><a href="global.html#Timer">Timer</a></li></ul>
 </nav>
 
 <br class="clear">

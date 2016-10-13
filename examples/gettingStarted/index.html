@@ -1,18 +1,47 @@
 <html>
-    <head>
-        <title>
-            HYPERJS Getting Started.
-        </title>
-    </head>
-    <body>
-        <!-- Create a canvas to render to. -->
-        <canvas id="canvas">
-            Your browser does not support the canvas element.
-        </canvas>
-    </body>
-    <!-- Load the game engine -->
-    <script src="../../build/HYPERJS.min.js"></script>
-    
-    <!-- Load the game code -->
-    <script src="game.js"></script>
+
+<head>
+    <title>
+        HYPERJS Getting Started.
+    </title>
+</head>
+
+<body>
+    <!-- Create a canvas to render to. -->
+    <canvas id="canvas">
+        Your browser does not support the canvas element.
+    </canvas>
+</body>
+<!-- Load the game engine -->
+<!--
+<script src="../../build/HYPERJS.min.js"></script>
+-->
+<script src="../../src/boot.js"></script>
+<script src="../../src/math.js"></script>
+<script src="../../src/timer.js"></script>
+<script src="../../src/input.js"></script>
+
+<script src="../../src/preload/boot.js"></script>
+<script src="../../src/preload/bitmap.js"></script>
+<script src="../../src/preload/spritesheet.js"></script>
+<script src="../../src/audio.js"></script>
+<script src="../../src/physics/boot.js"></script>
+<script src="../../src/Physics/collisionTesting.js"></script>
+<script src="../../src/Physics/vector.js"></script>
+<script src="../../src/Physics/box.js"></script>
+<script src="../../src/particles.js"></script>
+<script src="../../src/group.js"></script>
+<script src="../../src/screen.js"></script>
+<script src="../../src/state.js"></script>
+<script src="../../src/layer.js"></script>
+<script src="../../src/graphics/boot.js"></script>
+<script src="../../src/graphics/style.js"></script>
+<script src="../../src/graphics/draw.js"></script>
+<script src="../../src/graphics/animation.js"></script>
+<script src="../../src/sprite.js"></script>
+<script src="../../src/end.js"></script>
+
+<!-- Load the game code -->
+<script src="game.js"></script>
+
 </html>

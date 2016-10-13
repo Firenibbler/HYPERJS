@@ -275,7 +275,7 @@
         create: function (a) {
             a = a || {};
             var found = false;
-            for (let i = 0; i < this.group.length; i++) {
+            for (var i = 0; i < this.group.length; i++) {
                 if (!this.group[i].alive) {
                     found = true;
                     this.group[i].texture = a.texture || this.texture;
@@ -355,7 +355,7 @@
          */
 
         _update: function (g) {
-            for (let i = 0; i < this.group.length; i++) {
+            for (var i = 0; i < this.group.length; i++) {
                 if (this.group[i].alive) {
                     this.group[i]._update(g);
                 }
@@ -370,7 +370,7 @@
          */
 
         _render: function (g) {
-            for (let i = 0; i < this.group.length; i++) {
+            for (var i = 0; i < this.group.length; i++) {
                 if (this.group[i].alive) {
                     this.group[i]._render(g);
                 }

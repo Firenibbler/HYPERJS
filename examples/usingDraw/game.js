@@ -20,5 +20,6 @@ var gameState = new HYPER.State({
     },
 });
 screen.setCurrentState(gameState);
-screen.init();
+
 HYPER.init();
+screen.init();

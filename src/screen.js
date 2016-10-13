@@ -234,7 +234,7 @@
         this._tick = {
             FPS: e.tickFPS || e.tickfps || e.fps || 30,
             _now: 0,
-            _then: Date.now(),
+            _then: HYPER.CURRENT_DATE,
             _interval: 33.33333333,
             _delta: 0,
         };
@@ -247,7 +247,7 @@
         this._anime = {
             FPS: e.animeFPS || e.animefps || e.fps || 60,
             _now: 0,
-            _then: Date.now(),
+            _then: HYPER.CURRENT_DATE,
             _interval: 16.66666666666666,
             _delta: 0,
         };
@@ -297,7 +297,7 @@
          */
 
         setCurrentState: function (state) {
-            if (state._ID.split(" ")[0] === "state") {
+            if (state.type === "state") {
                 this.currentState = state;
                 this.currentState._init();
             } else {
@@ -308,10 +308,10 @@
         /**
          * Updates the screen view to match the view and camera varaibles.
          * @private
-         * @method HYPER.Screen._updateScreenview
+         * @method HYPER.Screen._updateScreenView
          */
 
-        _updateScreenview: function () {
+        _updateScreenView: function () {
             this.view.x = this.canvas.offsetLeft;
             this.view.y = this.canvas.offsetTop;
             this.camera.x = 0;
@@ -322,12 +322,8 @@
                 //console.log(this.canvas.style.width, this.canvas.style.height)
             }
             if (this.camera.width != this.canvas.width ||
-                this.camera.height != this.canvas.height ||
-                this.camera.width != this.canvas.width ||
                 this.camera.height != this.canvas.height) {
 
-                this.canvas.width = this.camera.width;
-                this.canvas.height = this.camera.height;
                 this.canvas.width = this.camera.width;
                 this.canvas.height = this.camera.height;
 
@@ -342,7 +338,7 @@
          */
 
         _updatePointerData: function () {
-            for (let i = 0; i < 10; i++) {
+            for (var i = 0; i < 10; i++) {
                 this.pointerDATA[i]._ID = i;
                 this.pointerDATA[i].trueX = HYPER.Input.Pointer.point[i].x - this.canvas.offsetLeft;
                 this.pointerDATA[i].trueY = HYPER.Input.Pointer.point[i].y - this.canvas.offsetTop;
@@ -510,7 +506,7 @@
          */
 
         _render: function () {
-            this._anime._now = Date.now();
+            this._anime._now = HYPER.CURRENT_DATE;
             this._anime._delta = this._anime._now - this._anime._then;
 
             if (this._anime._delta > this._anime._interval) {
@@ -550,14 +546,14 @@
          */
 
         _update: function () {
-            this._tick._now = Date.now();
+            this._tick._now = HYPER.CURRENT_DATE;
             this._tick._delta = this._tick._now - this._tick._then;
             if (this._tick._delta > this._tick._interval) {
                 this._tick._then = this._tick._now - (this._tick._delta % this._tick._interval);
 
                 // Game Code
 
-                this._updateScreenview();
+                this._updateScreenView();
 
                 this._updatePassedInfo();
 
