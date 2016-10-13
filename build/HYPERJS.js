@@ -7058,7 +7058,6 @@
             if (this.view.width + "px" != this.canvas.style.width || this.view.height + "px" != this.canvas.style.height) {
                 this.canvas.style.width = this.view.width + "px";
                 this.canvas.style.height = this.view.height + "px";
-                //console.log(this.canvas.style.width, this.canvas.style.height)
             }
             if (this.camera.width != this.canvas.width ||
                 this.camera.height != this.canvas.height ||
@@ -7758,7 +7757,6 @@
          */
 
         _updatePointerData: function (a) {
-            //console.log(this);
             for (var i = 0; i < 1; i++) {
 
                 this.pointerDATA[i].trueX = a.pointerDATA[i].x - this.view.x + this.camera.x;
@@ -7981,7 +7979,6 @@
                     }
                 }
             }
-            console.log("hi")
             this.onKeyHeld(data);
         },
 
@@ -8567,7 +8564,6 @@
          */
 
         _updatePointerData: function (a) {
-            //console.log(this);
             for (var i = 0; i < 1; i++) {
 
                 this.pointerDATA[i].trueX = a.pointerDATA[i].x - this.view.x + this.camera.x;
@@ -8790,7 +8786,6 @@
                     }
                 }
             }
-            console.log("hi")
             this.onKeyHeld(data);
         },
 
