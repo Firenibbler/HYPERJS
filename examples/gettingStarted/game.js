@@ -13,7 +13,7 @@ var gameState = new HYPER.State({
 
     },
 });
-screen.setCurrentState(gameState);
+
 var starImage = new HYPER.Preload.Bitmap({
     src: "star.png",
     onload: function () {
@@ -26,6 +26,7 @@ var starSprite = new HYPER.Sprite({
     x: 10,
     y: 10,
 });
+screen.setCurrentState(gameState);
 
-screen.init();
 HYPER.init();
+screen.init();

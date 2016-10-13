@@ -1,5 +1,6 @@
 var screen = new HYPER.Screen({
-    canvas: "canvas"
+    canvas: "canvas",
+    showFPS: true,
 });
 
 var gameState = new HYPER.State({
@@ -15,9 +16,9 @@ var gameState = new HYPER.State({
     // on every click
     onClick: function (info) {
         starGroup.create({
-            
+
             // Set position th the mouse position
-            
+
             // x position of new star
             x: info.x - 16,
             // y position of new star
@@ -44,5 +45,6 @@ var starGroup = new HYPER.Group({
 
 
 
-screen.init();
+
 HYPER.init();
+screen.init();

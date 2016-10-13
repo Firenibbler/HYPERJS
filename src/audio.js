@@ -1072,7 +1072,7 @@
                         self._stopFade(ids[i]);
                     }
 
-                    // If we are using Web Audio, let the native methods do the actual fade.
+                    // If we are using Web Audio, var the native methods do the actual fade.
                     if (self._webAudio && !sound._muted) {
                         var currentTime = Howler.ctx.currentTime;
                         var end = currentTime + (len / 1000);
@@ -1106,7 +1106,7 @@
                             self.volume(vol, soundId, true);
                         }
 
-                        // When the fade is complete, stop it and fire event.
+                        // When the fade is compvare, stop it and fire event.
                         if (vol === to) {
                             clearInterval(sound._interval);
                             sound._interval = null;
@@ -1462,7 +1462,7 @@
                 }
             }
 
-            // Delete this sound from the cache (if no other Howl is using it).
+            // delete this sound from the cache (if no other Howl is using it).
             var remCache = true;
             for (i = 0; i < Howler._howls.length; i++) {
                 if (Howler._howls[i]._src === self._src) {
@@ -1897,7 +1897,7 @@
                 self._errorFn = self._errorListener.bind(self);
                 self._node.addEventListener('error', self._errorFn, false);
 
-                // Listen for 'canplaythrough' event to let us know the sound is ready.
+                // Listen for 'canplaythrough' event to var us know the sound is ready.
                 self._loadFn = self._loadListener.bind(self);
                 self._node.addEventListener(Howler._canPlayEvent, self._loadFn, false);
 

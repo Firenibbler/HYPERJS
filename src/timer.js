@@ -8,7 +8,7 @@
     HYPER.Timer.tick = 0;
     HYPER.Timer.fps = 60;
     HYPER.Timer.now;
-    HYPER.Timer.then = Date.now();
+    HYPER.Timer.then = HYPER.CURRENT_DATE;
     HYPER.Timer.interval = 1000 / HYPER.Timer.fps;
     HYPER.Timer.delta;
     /**
@@ -42,45 +42,44 @@
         HYPER.Timer.children.push(timer);
     }
     HYPER.Timer.removeChild = function (child) {
-        for (let i = 0; i < HYPER.Timer.children.length; i++) {
+        for (var i = 0; i < HYPER.Timer.children.length; i++) {
             if (child._ID = HYPER.Timer.children[i]._ID) {
                 HYPER.Timer.children.splice(i, 1);
             }
         }
-    }
+    };
 
     HYPER.Timer.Ticker = function () {
 
-        requestAnimationFrame(HYPER.Timer.Ticker);
 
-        HYPER.Timer.now = Date.now();
+
+        HYPER.CURRENT_DATE = Date.now();
+
+
+        HYPER.Timer.now = HYPER.CURRENT_DATE;
         HYPER.Timer.delta = HYPER.Timer.now - HYPER.Timer.then;
 
         if (HYPER.Timer.delta > HYPER.Timer.interval) {
-            // update time stuffs
-
-            // Just `then = now` is not enough.
-            // Lets say we set fps at 10 which means
-            // each frame must take 100ms
-            // Now frame executes in 16ms (60fps) so
-            // the loop iterates 7 times (16*7 = 112ms) until
-            // delta > interval === true
-            // Eventually this lowers down the FPS as
-            // 112*10 = 1120ms (NOT 1000ms).
-            // So we have to get rid of that extra 12ms
-            // by subtracting delta (112) % interval (100).
-            // Hope that makes sense.
 
             HYPER.Timer.then = HYPER.Timer.now - (HYPER.Timer.delta % HYPER.Timer.interval);
 
-            for (let i = 0; i < HYPER.Timer.children.length; i++) {
+            for (var i = 0; i < HYPER.Timer.children.length; i++) {
                 HYPER.Timer.children[i](HYPER.Timer.tick);
             }
             HYPER.Timer.tick++;
 
         }
-    }
-    HYPER.Timer.init = function () {
+        //
+    };
+
+    HYPER.Timer._Looper = function () {
         HYPER.Timer.Ticker();
+        //requestAnimationFrame(HYPER.Timer._Looper);
+    }
+
+
+    HYPER.Timer.init = function () {
+        HYPER.Timer._Looper();
+        setInterval(HYPER.Timer._Looper, 1000 / 60);
     };
 })();

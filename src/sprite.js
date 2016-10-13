@@ -484,7 +484,7 @@
         _update: function (a) {
             if (this.active && this.alive) {
 
-                for (let i = 0; i < a.pointerDATA.length; i++) {
+                for (var i = 0; i < a.pointerDATA.length; i++) {
                     if (this.x < a.pointerDATA[i].x && this.y < a.pointerDATA[i].y && this.x + this.width > a.pointerDATA[i].x && this.y + this.height > a.pointerDATA[i].y) {
                         this.onHover(a.pointerDATA[i]);
                     }
@@ -532,6 +532,7 @@
                 this.lifeTime--;
                 if (this.lifeTime <= 0) {
                     this.kill();
+                    console.log("dead")
                 }
             }
 

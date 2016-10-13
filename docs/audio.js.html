@@ -1100,7 +1100,7 @@
                         self._stopFade(ids[i]);
                     }
 
-                    // If we are using Web Audio, let the native methods do the actual fade.
+                    // If we are using Web Audio, var the native methods do the actual fade.
                     if (self._webAudio &amp;&amp; !sound._muted) {
                         var currentTime = Howler.ctx.currentTime;
                         var end = currentTime + (len / 1000);
@@ -1134,7 +1134,7 @@
                             self.volume(vol, soundId, true);
                         }
 
-                        // When the fade is complete, stop it and fire event.
+                        // When the fade is compvare, stop it and fire event.
                         if (vol === to) {
                             clearInterval(sound._interval);
                             sound._interval = null;
@@ -1490,7 +1490,7 @@
                 }
             }
 
-            // Delete this sound from the cache (if no other Howl is using it).
+            // delete this sound from the cache (if no other Howl is using it).
             var remCache = true;
             for (i = 0; i &lt; Howler._howls.length; i++) {
                 if (Howler._howls[i]._src === self._src) {
@@ -1892,7 +1892,7 @@
             self._sprite = '__default';
 
             // Generate a unique ID for this sound.
-            self._id = Math.round(Date.now() * Math.random());
+            self._id = Math.round(HYPER.CURRENT_DATE * Math.random());
 
             // Add itself to the parent's pool.
             parent._sounds.push(self);
@@ -1925,7 +1925,7 @@
                 self._errorFn = self._errorListener.bind(self);
                 self._node.addEventListener('error', self._errorFn, false);
 
-                // Listen for 'canplaythrough' event to let us know the sound is ready.
+                // Listen for 'canplaythrough' event to var us know the sound is ready.
                 self._loadFn = self._loadListener.bind(self);
                 self._node.addEventListener(Howler._canPlayEvent, self._loadFn, false);
 
@@ -1962,7 +1962,7 @@
             self._sprite = '__default';
 
             // Generate a new ID so that it isn't confused with the previous sound.
-            self._id = Math.round(Date.now() * Math.random());
+            self._id = Math.round(HYPER.CURRENT_DATE * Math.random());
 
             return self;
         },
@@ -2289,7 +2289,7 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HYPER.Audio.Howl.html">Howl</a></li><li><a href="HYPER.Audio.HowlerGlobal.html">HowlerGlobal</a></li><li><a href="HYPER.Audio.Sound.html">Sound</a></li><li><a href="HYPER.Button.html">Button</a></li><li><a href="HYPER.Graphics.Animation.html">Animation</a></li><li><a href="HYPER.Graphics.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Graphics.Draw.html">Draw</a></li><li><a href="HYPER.Graphics.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Graphics.Style.html">Style</a></li><li><a href="HYPER.Group.html">Group</a></li><li><a href="HYPER.Layer.html">Layer</a></li><li><a href="HYPER.Particle.Emitter.html">Emitter</a></li><li><a href="HYPER.Particle.Particle.html">Particle</a></li><li><a href="HYPER.Physics.BoxJS.Box.html">Box</a></li><li><a href="HYPER.Physics.BoxJS.Engine.html">Engine</a></li><li><a href="HYPER.Physics.BoxJS.material.html">material</a></li><li><a href="HYPER.Physics.BoxJS.Vector2.html">Vector2</a></li><li><a href="HYPER.Preload.Audio.html">Audio</a></li><li><a href="HYPER.Preload.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Preload.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Screen.html">Screen</a></li><li><a href="HYPER.Sprite.html">Sprite</a></li><li><a href="HYPER.State.html">State</a></li></ul><h3>Namespaces</h3><ul><li><a href="HYPER.html">HYPER</a></li><li><a href="HYPER.Graphics.html">Graphics</a></li><li><a href="HYPER.Input.html">Input</a></li><li><a href="HYPER.Input.Keys.html">Keys</a></li><li><a href="HYPER.Input.Pointer.html">Pointer</a></li><li><a href="HYPER.Math.html">Math</a></li><li><a href="HYPER.Particle.html">Particle</a></li><li><a href="HYPER.Physics.html">Physics</a></li><li><a href="HYPER.Physics.BoxJS.html">BoxJS</a></li><li><a href="HYPER.Physics.Vector.html">Vector</a></li><li><a href="HYPER.Preload.html">Preload</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mobileAndTabletcheck">mobileAndTabletcheck</a></li><li><a href="global.html#no0p">no0p</a></li><li><a href="global.html#setFPS">setFPS</a></li><li><a href="global.html#Timer">Timer</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HYPER.Audio.Howl.html">Howl</a></li><li><a href="HYPER.Audio.HowlerGlobal.html">HowlerGlobal</a></li><li><a href="HYPER.Audio.Sound.html">Sound</a></li><li><a href="HYPER.Button.html">Button</a></li><li><a href="HYPER.Graphics.Animation.html">Animation</a></li><li><a href="HYPER.Graphics.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Graphics.Draw.html">Draw</a></li><li><a href="HYPER.Graphics.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Graphics.Style.html">Style</a></li><li><a href="HYPER.Group.html">Group</a></li><li><a href="HYPER.Layer.html">Layer</a></li><li><a href="HYPER.Particle.Emitter.html">Emitter</a></li><li><a href="HYPER.Particle.Particle.html">Particle</a></li><li><a href="HYPER.Physics.BoxJS.Box.html">Box</a></li><li><a href="HYPER.Physics.BoxJS.Engine.html">Engine</a></li><li><a href="HYPER.Physics.BoxJS.material.html">material</a></li><li><a href="HYPER.Physics.BoxJS.Vector2.html">Vector2</a></li><li><a href="HYPER.Preload.Audio.html">Audio</a></li><li><a href="HYPER.Preload.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Preload.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Screen.html">Screen</a></li><li><a href="HYPER.Sprite.html">Sprite</a></li><li><a href="HYPER.State.html">State</a></li></ul><h3>Namespaces</h3><ul><li><a href="HYPER.html">HYPER</a></li><li><a href="HYPER.Graphics.html">Graphics</a></li><li><a href="HYPER.Input.html">Input</a></li><li><a href="HYPER.Input.Keys.html">Keys</a></li><li><a href="HYPER.Input.Pointer.html">Pointer</a></li><li><a href="HYPER.Math.html">Math</a></li><li><a href="HYPER.Particle.html">Particle</a></li><li><a href="HYPER.Physics.html">Physics</a></li><li><a href="HYPER.Physics.BoxJS.html">BoxJS</a></li><li><a href="HYPER.Physics.Vector.html">Vector</a></li><li><a href="HYPER.Preload.html">Preload</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mobileAndTabvarcheck">mobileAndTabvarcheck</a></li><li><a href="global.html#no0p">no0p</a></li><li><a href="global.html#setFPS">setFPS</a></li><li><a href="global.html#Timer">Timer</a></li></ul>
 </nav>
 
 <br class="clear">

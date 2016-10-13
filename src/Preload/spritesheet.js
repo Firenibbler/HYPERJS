@@ -251,7 +251,7 @@
          */
 
         setAnimation: function (animeDATA) {
-            for (let i = 0; i < arguments.length; i++) {
+            for (var i = 0; i < arguments.length; i++) {
                 arguments[i].name = arguments[i].name || "animation" + Math.random() + "" + Math.random();
                 this.animations[animeDATA.name] = {};
                 this.animations[animeDATA.name].frames = animeDATA.frames || [0];
@@ -279,7 +279,7 @@
             // if a is an array.
             if (Array.isArray(a)) {
                 // loop through all a objects
-                for (let i = 0; i < a.length; i++) {
+                for (var i = 0; i < a.length; i++) {
                     // set the frameInfo equal to a, so user can define additional information if needed.
                     this.frameINFO[i] = a[i];
 
@@ -313,7 +313,7 @@
                 // If you want previous data to be overwritten.
                 if (override) {
                     // Loop through all frames.
-                    for (let i = 0; i < a.wide * a.tall; i++) {
+                    for (var i = 0; i < a.wide * a.tall; i++) {
                         // Calculate the X and Y position of each frame
                         posX = (i % a.wide) * (this.bitmap.width / a.wide);
                         posY = Math.floor(i / a.wide) * (this.bitmap.height / a.tall);
@@ -332,7 +332,7 @@
                     }
                 } else {
                     // Loop through all possible frames.
-                    for (let i = 0; i < a.wide * a.tall; i++) {
+                    for (var i = 0; i < a.wide * a.tall; i++) {
                         // Calculate the X and Y position of each frame
                         posX = (i % a.wide) * (this.bitmap.width / a.wide);
                         posY = Math.Floor(i / a.wide) * (this.bitmap.height / a.tall);

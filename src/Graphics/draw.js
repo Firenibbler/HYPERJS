@@ -137,6 +137,7 @@
 
         this.clearRect = function (x, y, width, height) {
             this.ctx.clearRect(x, y, width, height);
+            return this;
         };
 
         /**
@@ -413,7 +414,7 @@
                 this.ctx.translate(pos[0] + rotX, pos[1] + rotY);
                 this.ctx.rotate(HYPER.Math.degreesToRadians(angle));
                 this.ctx.moveTo(pos[0] - pos[0] - rotX, pos[1] - pos[1] - rotY);
-                for (let i = 0; i < pos.length; i += 2) {
+                for (var i = 0; i < pos.length; i += 2) {
                     this.ctx.lineTo(pos[i] - pos[0] - rotX, pos[i + 1] - pos[1] - rotY);
                 }
                 this.ctx.lineTo(pos[0] - pos[0] - rotX, pos[1] - pos[1] - rotY);
@@ -421,7 +422,7 @@
                 this.ctx.translate(-(pos[0] + rotX), -(pos[1] + rotY));
             } else {
                 this.ctx.moveTo(pos[0], pos[1]);
-                for (let i = 0; i < pos.length; i += 2) {
+                for (var i = 0; i < pos.length; i += 2) {
                     this.ctx.lineTo(pos[i], pos[i + 1]);
                 }
                 this.ctx.lineTo(pos[0], pos[1]);

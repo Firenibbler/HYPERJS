@@ -16,14 +16,8 @@
      */
 
     HYPER.Physics.checkAABBCollision = function (obj1, obj2) {
-        var mesh1 = {},
-            mesh2 = {};
-
-        mesh1 = obj1;
-        mesh2 = obj2;
-
-        if (mesh1.x <= mesh2.x + mesh2.size.width && mesh1.x + mesh1.size.width >= mesh2.x &&
-            mesh1.y <= mesh2.y + mesh2.size.height && mesh1.y + mesh1.size.height > mesh2.y) {
+        if (obj1.x <= obj2.x + obj2.size.width && obj1.x + obj1.size.width >= obj2.x &&
+            obj1.y <= obj2.y + obj2.size.height && obj1.y + obj1.size.height > obj2.y) {
             return true;
         } else {
             return false;

@@ -1,0 +1,29 @@
+{
+  "name": "hyperjs",
+  "version": "1.0.0",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-contrib-uglify": "^2.0.0"
+  },
+  "description": "Version 1.0.0",
+  "main": "Gruntfile.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "grunt min"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Firenibbler/HYPERJS.git"
+  },
+  "author": "Andrew Stavast",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Firenibbler/HYPERJS/issues"
+  },
+  "homepage": "https://github.com/Firenibbler/HYPERJS#readme"
+}

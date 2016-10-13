@@ -943,12 +943,12 @@
                         DONT_COLLIDE = true;
                     }
 
-                    for (let g = 0; g < b.material.dontCollideWith.length; g++) {
+                    for (var g = 0; g < b.material.dontCollideWith.length; g++) {
                         if (b.material.dontCollideWith[g] === a.material.name && !DONT_COLLIDE) {
                             DONT_COLLIDE = true;
                         }
                     }
-                    for (let g = 0; g < a.material.dontCollideWith.length; g++) {
+                    for (var g = 0; g < a.material.dontCollideWith.length; g++) {
                         if (a.material.dontCollideWith[g] === b.material.name && !DONT_COLLIDE) {
                             DONT_COLLIDE = true;
                         }
@@ -1012,7 +1012,7 @@
          */
 
         _update: function (a) {
-            for (let i = 0; i < this.bodies.length; i++) {
+            for (var i = 0; i < this.bodies.length; i++) {
                 this.bodies[i].oldPos.x = this.bodies[i].pos.x;
                 this.bodies[i].oldPos.y = this.bodies[i].pos.y;
 
@@ -1024,7 +1024,7 @@
 
 
 
-            for (let i = 0; i < this.bodies.length; i++) {
+            for (var i = 0; i < this.bodies.length; i++) {
 
                 if (this.bodies[i].pos.x < this.bounds.min.x) {
                     this.bodies[i].pos.x = this.bounds.min.x;
@@ -1057,7 +1057,7 @@
         _render: function (a) {
             if (this.debug) {
                 HYPER.Graphics.styleToCTX(HYPER.Graphics.DEFAULT_STYLE, a.ctx);
-                for (let i = 0; i < this.bodies.length; i++) {
+                for (var i = 0; i < this.bodies.length; i++) {
 
                     if (this.bodies[i].active) {
                         a.ctx.beginPath();
@@ -1101,7 +1101,7 @@
                 this.bodies.push(box.body);
                 this.length++;
             } else if (box.type === "group") {
-                for (let i = 0; i < box.group.length; i++) {
+                for (var i = 0; i < box.group.length; i++) {
                     this.bodies.push(box.group[i].body);
                     this.length++;
                 }
@@ -1121,7 +1121,7 @@
          */
 
         removeBody: function (box) {
-            for (let i = 0; i < this.bodies.length; i++) {
+            for (var i = 0; i < this.bodies.length; i++) {
                 if (this.bodies[i] === box) {
                     this.bodies.splice(i, 1);
                     this.length--;
@@ -1152,7 +1152,7 @@
             sprite.body = new HYPER.Physics.BoxJS.Box(physicsDATA);
         }
         if (sprite.type === "group") {
-            for (let i = 0; i < sprite.group.length; i++) {
+            for (var i = 0; i < sprite.group.length; i++) {
                 physicsDATA = physicsDATA || {};
                 physicsDATA.x = physicsDATA.x || sprite.group[i].x || 0;
                 physicsDATA.y = physicsDATA.y || sprite.group[i].y || 0;

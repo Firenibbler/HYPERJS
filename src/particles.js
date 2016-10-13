@@ -435,7 +435,7 @@
 
 
 
-        for (let i = 0; i < this.maxParticles; i++) {
+        for (var i = 0; i < this.maxParticles; i++) {
             this.particles[i] = new HYPER.Particle.Particle({
                 x: this.x,
                 y: this.y,
@@ -467,7 +467,7 @@
          */
         emit: function (startAngle, endAngle, speed, number) {
             number = number || 1;
-            for (let i = 0; i < this.particles.length; i++) {
+            for (var i = 0; i < this.particles.length; i++) {
                 if (!this.particles[i].alive) {
 
                     var random = HYPER.Math.degreesToRadians(HYPER.Math.random(startAngle, endAngle, true));
@@ -547,7 +547,7 @@
          */
 
         _update: function (a) {
-            for (let i = 0; i < this.particles.length; i++) {
+            for (var i = 0; i < this.particles.length; i++) {
                 if (this.particles[i].alive) {
                     this.particles[i].vel.x += this.gravity.x;
                     this.particles[i].vel.y += this.gravity.y;
@@ -572,12 +572,13 @@
          */
 
         _render: function (a) {
-            for (let i = 0; i < this.particles.length; i++) {
+            for (var i = 0; i < this.particles.length; i++) {
                 if (this.particles[i].alive) {
                     this.particles[i]._render(a, this.texture, this.style);
                 }
             }
             a.ctx.globalAlpha = 1;
+            HYPER.Graphics.Draw(a.ctx).setAlpha(1);
         },
 
     };
