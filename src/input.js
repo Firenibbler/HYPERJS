@@ -874,6 +874,7 @@
     /**
       Initilize all the event listeners that will be used
      */
+
     HYPER.Input._addEventListeners = function () {
 
         // check to see if mobile.
@@ -905,15 +906,15 @@
 
     };
 
-
     HYPER.Input.screens = [];
+
     HYPER.Input.addScreen = function (screen) {
         HYPER.Input.screens.push(screen);
     };
 
 
     HYPER.Input.updateInput = function () {
-        for (var i = 0; i < 10; i++) {
+        for (var i = 0; i < 1; i++) {
             HYPER.Input.Pointer.point[i].x = HYPER.Input.Pointer.point[i]._x;
             HYPER.Input.Pointer.point[i].y = HYPER.Input.Pointer.point[i]._y;
             HYPER.Input.Pointer.point[i].up = HYPER.Input.Pointer.point[i]._up;
@@ -928,22 +929,29 @@
             HYPER.Input.Pointer.point[i]._dblclick = false;
 
             for (var s = 0; s < HYPER.Input.screens.length; s++) {
-                if (HYPER.Input.Pointer.point[i].click) {
-                    HYPER.Input.screens[s]._onClick(i);
-                }
-                if (HYPER.Input.Pointer.point[i].up) {
-                    HYPER.Input.screens[s]._onUp(i);
-                }
-                if (HYPER.Input.Pointer.point[i].down) {
+                if (HYPER.Input.Pointer.point[i].x > HYPER.Input.screens[s].canvas.offsetLeft &&
+                    HYPER.Input.Pointer.point[i].y > HYPER.Input.screens[s].canvas.offsetTop &&
+                    HYPER.Input.Pointer.point[i].x < HYPER.Input.screens[s].canvas.offsetLeft + HYPER.Input.screens[s].view.width &&
+                    HYPER.Input.Pointer.point[i].y < HYPER.Input.screens[s].canvas.offsetTop + HYPER.Input.screens[s].view.height) {
 
-                    HYPER.Input.screens[s]._onDown(i);
+                    HYPER.Input.screens[s]._onHover(i);
+                    if (HYPER.Input.Pointer.point[i].click) {
+                        HYPER.Input.screens[s]._onClick(i);
+                    }
+                    if (HYPER.Input.Pointer.point[i].up) {
+                        HYPER.Input.screens[s]._onUp(i);
+                    }
+                    if (HYPER.Input.Pointer.point[i].down) {
 
-                }
-                if (HYPER.Input.Pointer.point[i].hold) {
-                    HYPER.Input.screens[s]._onHold(i);
-                }
-                if (HYPER.Input.Pointer.point[i].dblclick) {
-                    HYPER.Input.screens[s]._onDblClick(i);
+                        HYPER.Input.screens[s]._onDown(i);
+
+                    }
+                    if (HYPER.Input.Pointer.point[i].hold) {
+                        HYPER.Input.screens[s]._onHold(i);
+                    }
+                    if (HYPER.Input.Pointer.point[i].dblclick) {
+                        HYPER.Input.screens[s]._onDblClick(i);
+                    }
                 }
             }
 

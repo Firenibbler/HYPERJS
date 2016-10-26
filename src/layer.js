@@ -89,18 +89,7 @@
             _delta: 0,
         };
 
-        /**
-         * @private
-         * @property {function} _anime - stores all rendering speed settings.
-         */
 
-        this._anime = {
-            FPS: e.animeFPS || e.animefps || e.fps || 60,
-            _now: 0,
-            _then: HYPER.CURRENT_DATE,
-            _interval: 1000 / 60,
-            _delta: 0,
-        };
 
         /**
          * @property {string} backgroundColor - Background color of the Layer.
@@ -289,16 +278,7 @@
             this._tick._interval = 1000 / this._tick.FPS;
         },
 
-        /**
-         * Sets the update FPS of the screen. Note that this is the fastest all children can also render.
-         * @method HYPER.Layer.setAnimeFPS
-         * @param {number} fps - The desired FPS.
-         */
-
-        setAnimeFPS: function (fps) {
-            this._anime.FPS = fps;
-            this._anime._interval = 1000 / this._anime.FPS;
-        },
+        
 
         /**
          * Adds children to the object.
@@ -485,10 +465,7 @@
          */
 
         _updatePassedInfo: function (a) {
-            this.passedINFO.canvas = this.canvas;
-            this.passedINFO.ctx = this.ctx;
-            this.passedINFO.view = this.view;
-            this.passedINFO.camera = this.camera;
+            
 
             this._updatePointerData(a);
         },
@@ -686,89 +663,81 @@
          */
 
         _render: function (a) {
-            this._anime._now = HYPER.CURRENT_DATE;
-            this._anime._delta = this._anime._now - this._anime._then;
 
-            if (this._anime._delta > this._anime._interval) {
-
-                this._anime._then = this._anime._now - (this._anime._delta % this._anime._interval);
+            if (this.backgroundColor === "clear" || this.autoClear) {
 
 
-
-                if (this.backgroundColor === "clear" || this.autoClear) {
-
-
-                    HYPER.Graphics.Draw(a.ctx)
-                        .clearRect(
-                            0,
-                            0,
-                            a.canvas.width,
-                            a.canvas.height);
+                HYPER.Graphics.Draw(a.ctx)
+                    .clearRect(
+                        0,
+                        0,
+                        a.canvas.width,
+                        a.canvas.height);
 
 
-                }
+            }
 
 
 
 
-                if (this.motionBlur) {
+            if (this.motionBlur) {
 
-                    HYPER.Graphics.Draw(a.ctx, this.style)
-                        .bitmap(
-                            this.canvas,
-                            0,
-                            0,
-                            this.camera.width,
-                            this.camera.height,
-                            this.view.x,
-                            this.view.y,
-                            this.view.width,
-                            this.view.height);
+                HYPER.Graphics.Draw(a.ctx, this.style)
+                    .bitmap(
+                        this.canvas,
+                        0,
+                        0,
+                        this.camera.width,
+                        this.camera.height,
+                        this.view.x,
+                        this.view.y,
+                        this.view.width,
+                        this.view.height);
 
-                }
+            }
 
-                this._updateRenderingSettings(a);
-                this._updatePassedInfo(a);
-                this._renderChildren(this.passedINFO);
+            this._updateRenderingSettings(a);
+            this._updatePassedInfo(a);
+            this._renderChildren(this.passedINFO);
 
-                this.render(this.passedINFO);
-
-
+            this.render(this.passedINFO);
 
 
-                if (this.motionBlur) {
-
-                    HYPER.Graphics.Draw(a.ctx, this.style)
-                        .setAlpha(this.style.alpha / 2)
-                        .bitmap(
-                            this.canvas,
-                            0,
-                            0,
-                            this.camera.width,
-                            this.camera.height,
-                            this.view.x,
-                            this.view.y,
-                            this.view.width,
-                            this.view.height);
 
 
-                } else {
+            if (this.motionBlur) {
 
-                    HYPER.Graphics.Draw(a.ctx, this.style)
-                        .bitmap(
-                            this.canvas,
-                            0,
-                            0,
-                            this.camera.width,
-                            this.camera.height,
-                            this.view.x,
-                            this.view.y,
-                            this.view.width,
-                            this.view.height);
-                };
+                HYPER.Graphics.Draw(a.ctx, this.style)
+                    .setAlpha(this.style.alpha / 2)
+                    .bitmap(
+                        this.canvas,
+                        0,
+                        0,
+                        this.camera.width,
+                        this.camera.height,
+                        this.view.x,
+                        this.view.y,
+                        this.view.width,
+                        this.view.height);
 
 
+            } else {
+
+                HYPER.Graphics.Draw(a.ctx, this.style)
+                    .bitmap(
+                        this.canvas,
+                        0,
+                        0,
+                        this.camera.width,
+                        this.camera.height,
+                        this.view.x,
+                        this.view.y,
+                        this.view.width,
+                        this.view.height);
             };
+
+
+
         },
 
         /**
@@ -799,6 +768,12 @@
          */
 
         _init: function () {
+            
+            this.passedINFO.canvas = this.canvas;
+            this.passedINFO.ctx = this.ctx;
+            this.passedINFO.view = this.view;
+            this.passedINFO.camera = this.camera;
+            
             this.init();
         },
     };
