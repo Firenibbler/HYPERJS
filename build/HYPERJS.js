@@ -1,4 +1,4 @@
-/*! hyperjs - Version: 1.0.0 - 2016-10-13 - Author: Andrew Stavast */
+/*! hyperjs - Version: 1.0.0 - 2016-10-21 - Author: Andrew Stavast */
 /**
  * @author       Andrew Stavast <firenibbler@gmail.com>
  * @copyright    2016 Firenibbler Studios
@@ -115,38 +115,38 @@
      * @method Timer
      */
     HYPER.Timer = {};
-    HYPER.Timer.tick = 0;
-    HYPER.Timer.fps = 60;
-    HYPER.Timer.now;
-    HYPER.Timer.then = HYPER.CURRENT_DATE;
-    HYPER.Timer.interval = 1e3 / HYPER.Timer.fps;
-    HYPER.Timer.delta;
-    /**
-     * Gloable object for all Timer functions.
-     * @method setFPS
-     * @param {number} fps The new FPS value.
-     */
-    HYPER.Timer.setFPS = function(a) {
-        HYPER.Timer.fps = a;
-        HYPER.Timer.interval = 1e3 / HYPER.Timer.fps;
-    };
     HYPER.Timer.children = [];
     HYPER.Timer.addOnTick = function(a) {
         //callback._ID = "" + Math.random() + "" + Math.random();
         HYPER.Timer.children.push(a);
     };
     HYPER.Timer.setTimer = function(a, b) {
-        var c = HYPER.Timer.fps * a;
-        var d = function() {
-            if (HYPER.Timer.tick === d.originTime + c) {
-                d.callback();
-                HYPER.Timer.removeChild(this);
+        var c = false;
+        for (var d = 0; d < HYPER.Timer.children.length; d++) {
+            if (!HYPER.Timer.children[d].alive && HYPER.Timer.children[d].type === "timer") {
+                c = true;
+                var e = HYPER.Timer.fps * a;
+                HYPER.Timer.children[d]._ID = "" + Math.random() + "" + Math.random();
+                HYPER.Timer.children[d].originTime = HYPER.Timer.tick;
+                HYPER.Timer.children[d].callback = b;
+                HYPER.Timer.children[d].alive = true;
             }
-        };
-        d._ID = "" + Math.random() + "" + Math.random();
-        d.originTime = HYPER.Timer.tick;
-        d.callback = b;
-        HYPER.Timer.children.push(d);
+        }
+        if (!c) {
+            var e = HYPER.Timer.fps * a;
+            var f = function() {
+                if (HYPER.Timer.tick === f.originTime + e) {
+                    f.callback();
+                    f.alive = false;
+                }
+            };
+            f.type = "timer";
+            f._ID = "timer" + Math.random() + "" + Math.random();
+            f.originTime = HYPER.Timer.tick;
+            f.callback = b;
+            f.alive = true;
+            HYPER.Timer.children.push(f);
+        }
     };
     HYPER.Timer.removeChild = function(a) {
         for (var b = 0; b < HYPER.Timer.children.length; b++) {
@@ -157,22 +157,17 @@
     };
     HYPER.Timer.Ticker = function() {
         HYPER.CURRENT_DATE = Date.now();
-        HYPER.Timer.now = HYPER.CURRENT_DATE;
-        HYPER.Timer.delta = HYPER.Timer.now - HYPER.Timer.then;
-        if (HYPER.Timer.delta > HYPER.Timer.interval) {
-            HYPER.Timer.then = HYPER.Timer.now - HYPER.Timer.delta % HYPER.Timer.interval;
-            for (var a = 0; a < HYPER.Timer.children.length; a++) {
-                HYPER.Timer.children[a](HYPER.Timer.tick);
-            }
-            HYPER.Timer.tick++;
+        for (var a = 0; a < HYPER.Timer.children.length; a++) {
+            HYPER.Timer.children[a](HYPER.Timer.tick);
         }
+        HYPER.Timer.tick++;
     };
     HYPER.Timer._Looper = function() {
         HYPER.Timer.Ticker();
+        requestAnimationFrame(HYPER.Timer._Looper);
     };
     HYPER.Timer.init = function() {
         HYPER.Timer._Looper();
-        setInterval(HYPER.Timer._Looper, 1e3 / 60);
     };
 })();
 
@@ -4842,6 +4837,7 @@
          * @property {number} lifeTimeTotal - Total time of how long the object should be alive.
          */
         this.lifeTimeTotal = a.lifeTimeTotal || a.lifeTime || 100;
+        this._color = [];
     };
     HYPER.Particle.Particle.prototype = {
         /**
@@ -4879,18 +4875,17 @@
          */
         _render: function(a, b, c) {
             if (this.alive) {
-                b = b || {};
                 c = c || this.style;
                 if (this.x - this.size > a.camera.x + a.camera.width || this.y - this.size > a.camera.y + a.camera.height || this.x + this.size < a.camera.x || this.y + this.size < a.camera.y) {} else {
                     var d = this.lifeTime / this.lifeTimeTotal;
                     var e = (this.startSize - this.endSize) * d + this.endSize;
-                    var f = [ Math.floor((this.startColor[0] - this.endColor[0]) * d + this.endColor[0]), Math.floor((this.startColor[1] - this.endColor[1]) * d + this.endColor[1]), Math.floor((this.startColor[2] - this.endColor[2]) * d + this.endColor[2]), (this.startColor[3] - this.endColor[3]) * d + this.endColor[3] ];
-                    var g = "rgb(" + f[0] + ", " + f[1] + ", " + f[2] + ")";
-                    var h = f[3] * c.alpha;
+                    this._color = [ Math.floor((this.startColor[0] - this.endColor[0]) * d + this.endColor[0]), Math.floor((this.startColor[1] - this.endColor[1]) * d + this.endColor[1]), Math.floor((this.startColor[2] - this.endColor[2]) * d + this.endColor[2]), (this.startColor[3] - this.endColor[3]) * d + this.endColor[3] ];
+                    var f = "rgb(" + this._color[0] + ", " + this._color[1] + ", " + this._color[2] + ")";
+                    var g = this._color[3] * c.alpha;
                     if (b.type === "bitmap") {
-                        HYPER.Graphics.Draw(a.ctx, c).setFillColor(g).setStrokeColor(g).setAlpha(h).bitmap(b, this.x - b.width / 2 - a.camera.x, this.y - b.height / 2 - a.camera.y, this.size, b.height / this.width * this.size, 0, 0, b.width, b.height, this.angle, b.width / 2, b.height / 2);
+                        HYPER.Graphics.Draw(a.ctx, c).setFillColor(f).setStrokeColor(f).setAlpha(g).bitmap(b, this.x - b.width / 2 - a.camera.x, this.y - b.height / 2 - a.camera.y, this.size, b.height / this.width * this.size, 0, 0, b.width, b.height, this.angle, b.width / 2, b.height / 2);
                     } else {
-                        HYPER.Graphics.Draw(a.ctx, c).setFillColor(g).setStrokeColor(g).setAlpha(h).circle(this.x - a.camera.x, this.y - a.camera.y, e);
+                        HYPER.Graphics.Draw(a.ctx, c).setFillColor(f).setStrokeColor(f).setAlpha(g).circle(this.x - a.camera.x, this.y - a.camera.y, e);
                     }
                 }
             }
@@ -5632,17 +5627,6 @@
         };
         /**
          * @private
-         * @property {function} _anime - stores all rendering speed settings.
-         */
-        this._anime = {
-            FPS: a.animeFPS || a.animefps || a.fps || 60,
-            _now: 0,
-            _then: HYPER.CURRENT_DATE,
-            _interval: 16.66666666666666,
-            _delta: 0
-        };
-        /**
-         * @private
          * @property {function} _looper - function that loops the render and update functions.
          */
         this._looper = function() {
@@ -5658,18 +5642,9 @@
          * @method HYPER.Screen.setTickFPS
          * @param {number} fps - The desired FPS.
          */
-        setTickFPS: function(a) {
+        setFPS: function(a) {
             this._tick.FPS = a;
             this._tick._interval = 1e3 / this._tick.FPS;
-        },
-        /**
-         * Sets the update FPS of the screen. Note that this is the fastest all children can also render.
-         * @method HYPER.Screen.setAnimeFPS
-         * @param {number} fps - The desired FPS.
-         */
-        setAnimeFPS: function(a) {
-            this._anime.FPS = a;
-            this._anime._interval = 1e3 / this._anime.FPS;
         },
         /**
          * Sets the current state to the specified state.
@@ -5841,19 +5816,10 @@
          * @method HYPER.Screen._render
          */
         _render: function() {
-            this._anime._now = HYPER.CURRENT_DATE;
-            this._anime._delta = this._anime._now - this._anime._then;
-            if (this._anime._delta > this._anime._interval) {
-                this._anime._then = this._anime._now - this._anime._delta % this._anime._interval;
-                // Game Code
-                this._updateRenderingSettings();
-                this._updatePassedInfo();
-                this.currentState._render(this.passedINFO);
-                this.render(this.passedINFO);
-                if (this.showFPS) {
-                    HYPER.Graphics.Draw(this.ctx).setFillColor("#FF0000").text("FPS: " + Math.round(1e3 / this._anime._delta), 10, 10);
-                }
-            }
+            this._updateRenderingSettings();
+            this._updatePassedInfo();
+            this.currentState._render(this.passedINFO);
+            this.render(this.passedINFO);
         },
         /**
          * Called every tick.
@@ -5958,17 +5924,6 @@
             _now: 0,
             _then: HYPER.CURRENT_DATE,
             _interval: 1e3 / 30,
-            _delta: 0
-        };
-        /**
-         * @private
-         * @property {function} _anime - stores all rendering speed settings.
-         */
-        this._anime = {
-            FPS: a.animeFPS || a.animefps || a.fps || 60,
-            _now: 0,
-            _then: HYPER.CURRENT_DATE,
-            _interval: 1e3 / 60,
             _delta: 0
         };
         /**
@@ -6107,15 +6062,6 @@
             this._tick._interval = 1e3 / this._tick.FPS;
         },
         /**
-         * Sets the update FPS of the screen. Note that this is the fastest all children can also render.
-         * @method HYPER.State.setAnimeFPS
-         * @param {number} fps - The desired FPS.
-         */
-        setAnimeFPS: function(a) {
-            this._anime.FPS = a;
-            this._anime._interval = 1e3 / this._anime.FPS;
-        },
-        /**
          * Adds children to the object.
          * @method HYPER.State.addChild
          * @param {object} child - The child you want to add.
@@ -6140,7 +6086,7 @@
          * @method HYPER.State.removeAllChildren
          */
         removeAllChildren: function() {
-            this.children = [];
+            this.children.length = 0;
         },
         /**
          * updates the renderer.
@@ -6219,7 +6165,7 @@
          */
         _updatePointerData: function(a) {
             //console.log(this);
-            for (var b = 0; b < 1; b++) {
+            for (var b = 0; b < 10; b++) {
                 this.pointerDATA[b].trueX = a.pointerDATA[b].x - this.view.x + this.camera.x;
                 this.pointerDATA[b].trueY = a.pointerDATA[b].y - this.view.y + this.camera.y;
                 this.pointerDATA[b].scaleFactorX = this.camera.width / this.view.width;
@@ -6431,25 +6377,20 @@
          * @method HYPER.State._render
          */
         _render: function(a) {
-            this._anime._now = HYPER.CURRENT_DATE;
-            this._anime._delta = this._anime._now - this._anime._then;
-            if (this._anime._delta > this._anime._interval) {
-                this._anime._then = this._anime._now - this._anime._delta % this._anime._interval;
-                if (this.backgroundColor === "clear" || this.autoClear) {
-                    HYPER.Graphics.Draw(a.ctx).clearRect(0, 0, a.canvas.width, a.canvas.height);
-                }
-                if (this.motionBlur) {
-                    HYPER.Graphics.Draw(a.ctx, this.style).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
-                }
-                this._updateRenderingSettings(a);
-                this._updatePassedInfo(a);
-                this._renderChildren(this.passedINFO);
-                this.render(this.passedINFO);
-                if (this.motionBlur) {
-                    HYPER.Graphics.Draw(a.ctx, this.style).setAlpha(this.style.alpha / 2).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
-                } else {
-                    HYPER.Graphics.Draw(a.ctx, this.style).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
-                }
+            if (this.backgroundColor === "clear" || this.autoClear) {
+                HYPER.Graphics.Draw(a.ctx).clearRect(0, 0, a.canvas.width, a.canvas.height);
+            }
+            if (this.motionBlur) {
+                HYPER.Graphics.Draw(a.ctx, this.style).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
+            }
+            this._updateRenderingSettings(a);
+            this._updatePassedInfo(a);
+            this._renderChildren(this.passedINFO);
+            this.render(this.passedINFO);
+            if (this.motionBlur) {
+                HYPER.Graphics.Draw(a.ctx, this.style).setAlpha(this.style.alpha / 2).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
+            } else {
+                HYPER.Graphics.Draw(a.ctx, this.style).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
             }
         },
         /**
@@ -6549,17 +6490,6 @@
             _now: 0,
             _then: HYPER.CURRENT_DATE,
             _interval: 1e3 / 30,
-            _delta: 0
-        };
-        /**
-         * @private
-         * @property {function} _anime - stores all rendering speed settings.
-         */
-        this._anime = {
-            FPS: a.animeFPS || a.animefps || a.fps || 60,
-            _now: 0,
-            _then: HYPER.CURRENT_DATE,
-            _interval: 1e3 / 60,
             _delta: 0
         };
         /**
@@ -6696,15 +6626,6 @@
         setTickFPS: function(a) {
             this._tick.FPS = a;
             this._tick._interval = 1e3 / this._tick.FPS;
-        },
-        /**
-         * Sets the update FPS of the screen. Note that this is the fastest all children can also render.
-         * @method HYPER.Layer.setAnimeFPS
-         * @param {number} fps - The desired FPS.
-         */
-        setAnimeFPS: function(a) {
-            this._anime.FPS = a;
-            this._anime._interval = 1e3 / this._anime.FPS;
         },
         /**
          * Adds children to the object.
@@ -7023,25 +6944,20 @@
          * @method HYPER.Layer._render
          */
         _render: function(a) {
-            this._anime._now = HYPER.CURRENT_DATE;
-            this._anime._delta = this._anime._now - this._anime._then;
-            if (this._anime._delta > this._anime._interval) {
-                this._anime._then = this._anime._now - this._anime._delta % this._anime._interval;
-                if (this.backgroundColor === "clear" || this.autoClear) {
-                    HYPER.Graphics.Draw(a.ctx).clearRect(0, 0, a.canvas.width, a.canvas.height);
-                }
-                if (this.motionBlur) {
-                    HYPER.Graphics.Draw(a.ctx, this.style).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
-                }
-                this._updateRenderingSettings(a);
-                this._updatePassedInfo(a);
-                this._renderChildren(this.passedINFO);
-                this.render(this.passedINFO);
-                if (this.motionBlur) {
-                    HYPER.Graphics.Draw(a.ctx, this.style).setAlpha(this.style.alpha / 2).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
-                } else {
-                    HYPER.Graphics.Draw(a.ctx, this.style).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
-                }
+            if (this.backgroundColor === "clear" || this.autoClear) {
+                HYPER.Graphics.Draw(a.ctx).clearRect(0, 0, a.canvas.width, a.canvas.height);
+            }
+            if (this.motionBlur) {
+                HYPER.Graphics.Draw(a.ctx, this.style).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
+            }
+            this._updateRenderingSettings(a);
+            this._updatePassedInfo(a);
+            this._renderChildren(this.passedINFO);
+            this.render(this.passedINFO);
+            if (this.motionBlur) {
+                HYPER.Graphics.Draw(a.ctx, this.style).setAlpha(this.style.alpha / 2).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
+            } else {
+                HYPER.Graphics.Draw(a.ctx, this.style).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
             }
         },
         /**

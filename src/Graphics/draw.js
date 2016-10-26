@@ -182,13 +182,13 @@
          */
 
         this.circle = function (x, y, radius, startAngle, endAngle, counterClockwise) {
-            startAngle = startAngle || 0;
-            endAngle = endAngle || 360;
-            counterClockwise = counterClockwise || false;
+            this.startAngle = startAngle || 0;
+            this.endAngle = endAngle || 360;
+            this.counterClockwise = counterClockwise || false;
             if (this.autoStart === true) {
                 this.ctx.beginPath();
             }
-            this.ctx.arc(x, y, radius, HYPER.Math.degreesToRadians(startAngle), HYPER.Math.degreesToRadians(endAngle), counterClockwise);
+            this.ctx.arc(x, y, radius, HYPER.Math.degreesToRadians(this.startAngle), HYPER.Math.degreesToRadians(this.endAngle), this.counterClockwise);
             // fill the object
             if (this.style.fill) {
                 this.ctx.fill();
@@ -312,18 +312,18 @@
          */
 
         this.rect = function (x, y, width, height, angle, rotX, rotY) {
-            angle = angle || 0;
-            rotX = rotX || 0;
-            rotY = rotY || 0;
+            this.angle = angle || 0;
+            this.rotX = rotX || 0;
+            this.rotY = rotY || 0;
             if (this.autoStart === true) {
                 this.ctx.beginPath();
             }
             if (angle != 0) {
-                this.ctx.translate(x + rotX, y + rotY);
-                this.ctx.rotate(HYPER.Math.degreesToRadians(angle));
-                this.ctx.rect(-rotX, -rotY, width, height);
-                this.ctx.rotate(-HYPER.Math.degreesToRadians(angle));
-                this.ctx.translate(-(x + rotX), -(y + rotY));
+                this.ctx.translate(x + this.rotX, y + this.rotY);
+                this.ctx.rotate(HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.rect(-this.rotX, -this.rotY, width, height);
+                this.ctx.rotate(-HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.translate(-(x + this.rotX), -(y + this.rotY));
             } else {
                 this.ctx.rect(x, y, width, height);
             }
@@ -357,21 +357,21 @@
          */
 
         this.triangle = function (x1, y1, x2, y2, x3, y3, angle, rotX, rotY) {
-            angle = angle || 0;
-            rotX = rotX || 0;
-            rotY = rotY || 0;
+            this.angle = angle || 0;
+            this.rotX = rotX || 0;
+            this.rotY = rotY || 0;
             if (this.autoStart === true) {
                 this.ctx.beginPath();
             }
-            if (angle != 0) {
-                this.ctx.translate(x1 + rotX, y1 + rotY);
-                this.ctx.rotate(HYPER.Math.degreesToRadians(angle));
-                this.ctx.moveTo(x1 - x1 - rotX, y1 - x1 - rotY);
-                this.ctx.lineTo(x2 - x1 - rotX, y2 - y1 - rotY);
-                this.ctx.lineTo(x3 - x1 - rotX, y3 - y1 - rotY);
-                this.ctx.lineTo(x1 - x1 - rotX, y1 - y1 - rotY);
-                this.ctx.rotate(-HYPER.Math.degreesToRadians(angle));
-                this.ctx.translate(-(x1 + rotX), -(y1 + rotY));
+            if (this.angle != 0) {
+                this.ctx.translate(x1 + this.rotX, y1 + this.rotY);
+                this.ctx.rotate(HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.moveTo(x1 - x1 - this.rotX, y1 - x1 - this.rotY);
+                this.ctx.lineTo(x2 - x1 - this.rotX, y2 - y1 - this.rotY);
+                this.ctx.lineTo(x3 - x1 - this.rotX, y3 - y1 - this.rotY);
+                this.ctx.lineTo(x1 - x1 - this.rotX, y1 - y1 - this.rotY);
+                this.ctx.rotate(-HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.translate(-(x1 + this.rotX), -(y1 + this.rotY));
             } else {
                 this.ctx.moveTo(x1, y1);
                 this.ctx.lineTo(x2, y2);
@@ -404,22 +404,22 @@
          */
 
         this.polygon = function (pos, angle, rotX, rotY) {
-            angle = angle || 0;
-            rotX = rotX || 0;
-            rotY = rotY || 0;
+            this.angle = angle || 0;
+            this.rotX = rotX || 0;
+            this.rotY = rotY || 0;
             if (this.autoStart === true) {
                 this.ctx.beginPath();
             }
             if (angle != 0) {
-                this.ctx.translate(pos[0] + rotX, pos[1] + rotY);
-                this.ctx.rotate(HYPER.Math.degreesToRadians(angle));
-                this.ctx.moveTo(pos[0] - pos[0] - rotX, pos[1] - pos[1] - rotY);
+                this.ctx.translate(pos[0] + this.rotX, pos[1] + this.rotY);
+                this.ctx.rotate(HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.moveTo(pos[0] - pos[0] - this.rotX, pos[1] - pos[1] - this.rotY);
                 for (var i = 0; i < pos.length; i += 2) {
-                    this.ctx.lineTo(pos[i] - pos[0] - rotX, pos[i + 1] - pos[1] - rotY);
+                    this.ctx.lineTo(pos[i] - pos[0] - this.rotX, pos[i + 1] - pos[1] - this.rotY);
                 }
-                this.ctx.lineTo(pos[0] - pos[0] - rotX, pos[1] - pos[1] - rotY);
-                this.ctx.rotate(-HYPER.Math.degreesToRadians(angle));
-                this.ctx.translate(-(pos[0] + rotX), -(pos[1] + rotY));
+                this.ctx.lineTo(pos[0] - pos[0] - this.rotX, pos[1] - pos[1] - this.rotY);
+                this.ctx.rotate(-HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.translate(-(pos[0] + this.rotX), -(pos[1] + this.rotY));
             } else {
                 this.ctx.moveTo(pos[0], pos[1]);
                 for (var i = 0; i < pos.length; i += 2) {
@@ -456,23 +456,23 @@
          */
 
         this.text = function (text, x, y, angle, rotX, rotY) {
-            angle = angle || 0;
-            rotX = rotX || 0;
-            rotY = rotY || 0;
+            this.angle = angle || 0;
+            this.rotX = rotX || 0;
+            this.rotY = rotY || 0;
             if (this.autoStart === true) {
                 this.ctx.beginPath();
             }
             if (angle != 0) {
-                this.ctx.translate(x + rotX, y + rotY);
-                this.ctx.rotate(HYPER.Math.degreesToRadians(angle));
+                this.ctx.translate(x + this.rotX, y + this.rotY);
+                this.ctx.rotate(HYPER.Math.degreesToRadians(this.angle));
                 if (this.style.fill) {
-                    this.ctx.fillText(text, -rotX, -rotY);
+                    this.ctx.fillText(text, -this.rotX, -this.rotY);
                 }
                 if (this.style.stroke) {
-                    this.ctx.strokeText(text, -rotX, -rotY);
+                    this.ctx.strokeText(text, -this.rotX, -this.rotY);
                 }
-                this.ctx.rotate(-HYPER.Math.degreesToRadians(angle));
-                this.ctx.translate(-(x + rotX), -(y + rotY));
+                this.ctx.rotate(-HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.translate(-(x + this.rotX), -(y + this.rotY));
             } else {
                 if (this.style.fill) {
                     this.ctx.fillText(text, x, y);
@@ -507,49 +507,64 @@
          */
 
         this.bitmap = function (image, x, y, width, height, sx, sy, swidth, sheight, angle, rotX, rotY, scaleX, scaleY) {
-            angle = angle || 0;
-            rotX = rotX || 0;
-            rotY = rotY || 0;
+            
+            this.angle = angle || 0;
+            this.rotX = rotX || 0;
+            this.rotY = rotY || 0;
+
             if (image.bitmap) {
-                image = image.bitmap;
+                
+                this.image = image.bitmap;
+                
+            } else {
+                
+                this.image = image;
+                
             }
-            sx = sx || 0;
-            sy = sy || 0;
-            scaleX = scaleX || 1;
-            scaleY = scaleY || 1;
-            swidth = swidth || image.width;
-            sheight = sheight || image.height;
+            
+            this.sx = sx || 0;
+            this.sy = sy || 0;
+            this.scaleX = scaleX || 1;
+            this.scaleY = scaleY || 1;
+            this.swidth = swidth || image.width;
+            this.sheight = sheight || image.height;
+            
             if (this.autoStart === true) {
                 this.ctx.beginPath();
             }
 
-            if (angle != 0 || scaleX != 1 || scaleY != 1) {
-                //this.ctx.save();
-                this.ctx.translate(x + rotX, y + rotY);
+            if (this.angle != 0 || this.scaleX != 1 || this.scaleY != 1) {
+                
+                this.ctx.translate(x + this.rotX, y + this.rotY);
 
-                this.ctx.rotate(HYPER.Math.degreesToRadians(angle));
-                this.ctx.scale(scaleX, scaleY);
-                this.ctx.drawImage(image, sx, sy, swidth, sheight, -rotX, -rotY, width, height);
-                this.ctx.scale(1 / scaleX, 1 / scaleY);
-                this.ctx.rotate(-HYPER.Math.degreesToRadians(angle));
+                this.ctx.rotate(HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.scale(this.scaleX, this.scaleY);
+                this.ctx.drawImage(this.image, this.sx, this.sy, this.swidth, this.sheight, -this.rotX, -this.rotY, width, height);
+                this.ctx.scale(1 / this.scaleX, 1 / this.scaleY);
+                this.ctx.rotate(-HYPER.Math.degreesToRadians(this.angle));
 
-                this.ctx.translate(-(x + rotX), -(y + rotY));
-                //this.ctx.restore();
+                this.ctx.translate(-(x + this.rotX), -(y + this.rotY));
+                
             } else {
-                this.ctx.drawImage(image, sx, sy, swidth, sheight, x, y, width, height);
+                
+                this.ctx.drawImage(this.image, this.sx, this.sy, this.swidth, this.sheight, x, y, width, height);
+                
             }
 
             // fill the object
             if (this.style.fill) {
                 this.ctx.fill();
             }
+            
             //stroke the object
             if (this.style.stroke) {
                 this.ctx.stroke();
             }
+            
             if (this.autoStart === true) {
                 this.ctx.closePath();
             }
+            
             return this;
         };
 

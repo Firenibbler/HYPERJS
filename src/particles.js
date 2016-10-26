@@ -147,6 +147,8 @@
 
         this.lifeTimeTotal = e.lifeTimeTotal || e.lifeTime || 100;
 
+        this._color = [];
+
     };
 
     HYPER.Particle.Particle.prototype = {
@@ -160,23 +162,26 @@
 
         _update: function (a) {
             if (this.alive) {
-                if (this.x - this.size > a.camera.x + a.camera.width ||
-                    this.y - this.size > a.camera.y + a.camera.height ||
-                    this.x + this.size < a.camera.x ||
-                    this.y + this.size < a.camera.y) {
 
-                } else {
-                    this.x += this.vel.x;
-                    this.y += this.vel.y;
-                    this.angle += this.vel.angle;
-                    if (this.lifeTime > 0) {
-                        this.lifeTime--;
-                    }
 
-                    if (this.lifeTime <= 0) {
-                        this.alive = false;
-                    }
-                }
+
+
+
+                this.percentGone = this.lifeTime / this.lifeTimeTotal;
+                this.size = ((this.startSize - this.endSize) * this.percentGone) + this.endSize;
+                this._color = [
+                        Math.floor(((this.startColor[0] - this.endColor[0]) * this.percentGone) + this.endColor[0]),
+                        Math.floor(((this.startColor[1] - this.endColor[1]) * this.percentGone) + this.endColor[1]),
+                        Math.floor(((this.startColor[2] - this.endColor[2]) * this.percentGone) + this.endColor[2]),
+                    ((this.startColor[3] - this.endColor[3]) * this.percentGone) + this.endColor[3],
+                ];
+
+                this.RBGcolor = "rgb(" + this._color[0] + ", " + this._color[1] + ", " + this._color[2] + ")"
+                this._alpha = this._color[3] * style.alpha;
+
+                this.x += this.vel.x;
+                this.y += this.vel.y;
+                this.angle += this.vel.angle;
                 if (this.lifeTime > 0) {
                     this.lifeTime--;
                 }
@@ -185,6 +190,14 @@
                     this.alive = false;
                 }
             }
+            if (this.lifeTime > 0) {
+                this.lifeTime--;
+            }
+
+            if (this.lifeTime <= 0) {
+                this.alive = false;
+            }
+
 
         },
 
@@ -197,28 +210,19 @@
 
         _render: function (a, image, style) {
             if (this.alive) {
-                image = image || {};
-                style = style || this.style;
+
+                this.style = style || this.style;
                 if (this.x - this.size > a.camera.x + a.camera.width ||
                     this.y - this.size > a.camera.y + a.camera.height ||
                     this.x + this.size < a.camera.x ||
                     this.y + this.size < a.camera.y) {
 
                 } else {
-                    var percentGone = this.lifeTime / this.lifeTimeTotal;
-                    var size = ((this.startSize - this.endSize) * percentGone) + this.endSize;
-                    var color = [
-                        Math.floor(((this.startColor[0] - this.endColor[0]) * percentGone) + this.endColor[0]),
-                        Math.floor(((this.startColor[1] - this.endColor[1]) * percentGone) + this.endColor[1]),
-                        Math.floor(((this.startColor[2] - this.endColor[2]) * percentGone) + this.endColor[2]),
-                        ((this.startColor[3] - this.endColor[3]) * percentGone) + this.endColor[3],
-                ];
 
-                    var RBGcolor = "rgb(" + color[0] + ", " + color[1] + ", " + color[2] + ")"
-                    var alpha = color[3] * style.alpha;
+
                     if (image.type === "bitmap") {
 
-                        HYPER.Graphics.Draw(a.ctx, style).setFillColor(RBGcolor).setStrokeColor(RBGcolor).setAlpha(alpha).bitmap(image,
+                        HYPER.Graphics.Draw(a.ctx, this.style).setAlpha(alpha).bitmap(image,
                             this.x - (image.width / 2) - a.camera.x,
                             this.y - (image.height / 2) - a.camera.y,
                             this.size, (image.height / this.width) * this.size,
@@ -230,7 +234,7 @@
                             image.width / 2,
                             image.height / 2);
                     } else {
-                        HYPER.Graphics.Draw(a.ctx, style).setFillColor(RBGcolor).setStrokeColor(RBGcolor).setAlpha(alpha).circle(this.x - a.camera.x, this.y - a.camera.y, size);
+                        HYPER.Graphics.Draw(a.ctx, this.style).setFillColor(this.RBGcolor).setStrokeColor(this.RBGcolor).setAlpha(this._alpha).circle(this.x - a.camera.x, this.y - a.camera.y, this.size);
                     }
                 }
 

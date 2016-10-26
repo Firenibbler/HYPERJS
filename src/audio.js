@@ -2221,33 +2221,33 @@
      */
 
     HYPER.Audio = {};
-    
+
     /**
      * create a new Howler global controller.
      * @class HYPER.Audio.HowlerGlobal
      */
-    
+
     HYPER.Audio.HowlerGlobal = HowlerGlobal;
-    
+
     /**
      * Howler global controller.
      * @method HYPER.Audio.Howler
      */
-    
+
     HYPER.Audio.Howler = Howler;
-    
+
     /**
      * Load audio files, use Howler loader API.
      * @class HYPER.Audio.Howl
      */
-    
+
     HYPER.Audio.Howl = Howl;
-    
+
     /**
      * Howler Sound object.
      * @class HYPER.Audio.Sound
      */
-    
+
     HYPER.Audio.Sound = Sound;
 
 

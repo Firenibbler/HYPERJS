@@ -195,6 +195,12 @@
          */
 
         this.onHold = e.onHold || no0p;
+        
+        /**
+         * @property {function} onHover - Function that is called every tick the screen is hovered over by the mouse pointer.
+         */
+
+        this.onHover = e.onHold || no0p;
 
         /**
          * @property {function} onDblClick - Function that is called every time the screen is double clicked.
@@ -241,19 +247,6 @@
 
         /**
          * @private
-         * @property {function} _anime - stores all rendering speed settings.
-         */
-
-        this._anime = {
-            FPS: e.animeFPS || e.animefps || e.fps || 60,
-            _now: 0,
-            _then: HYPER.CURRENT_DATE,
-            _interval: 16.66666666666666,
-            _delta: 0,
-        };
-
-        /**
-         * @private
          * @property {function} _looper - function that loops the render and update functions.
          */
 
@@ -274,20 +267,9 @@
          * @param {number} fps - The desired FPS.
          */
 
-        setTickFPS: function (fps) {
+        setFPS: function (fps) {
             this._tick.FPS = fps;
             this._tick._interval = 1000 / this._tick.FPS;
-        },
-
-        /**
-         * Sets the update FPS of the screen. Note that this is the fastest all children can also render.
-         * @method HYPER.Screen.setAnimeFPS
-         * @param {number} fps - The desired FPS.
-         */
-
-        setAnimeFPS: function (fps) {
-            this._anime.FPS = fps;
-            this._anime._interval = 1000 / this._anime.FPS;
         },
 
         /**
@@ -363,10 +345,6 @@
          */
 
         _updatePassedInfo: function () {
-            this.passedINFO.canvas = this.canvas;
-            this.passedINFO.ctx = this.ctx;
-            this.passedINFO.view = this.view;
-            this.passedINFO.camera = this.camera;
 
             this._updatePointerData();
         },
@@ -453,6 +431,20 @@
             this.currentState._onHold(this.pointerDATA[id]);
             this.onHold(this.pointerDATA[id]);
         },
+        
+        /**
+         * Called when the mouse pointer is hovering.
+         * @private
+         * @method HYPER.Screen._onHover
+         */
+
+        _onHover: function (id) {
+            
+            this._updatePointerData();
+            //console.log(this.pointerDATA[id])
+            this.currentState._onHover(this.pointerDATA[id]);
+            this.onHover(this.pointerDATA[id]);
+        },
 
         /**
          * Called when the user double clicks.
@@ -506,37 +498,16 @@
          */
 
         _render: function () {
-            this._anime._now = HYPER.CURRENT_DATE;
-            this._anime._delta = this._anime._now - this._anime._then;
+            this._updateRenderingSettings();
 
-            if (this._anime._delta > this._anime._interval) {
-
-                this._anime._then = this._anime._now - (this._anime._delta % this._anime._interval);
-
-                // Game Code
-
-
-
-                this._updateRenderingSettings();
-
-                this._updatePassedInfo();
+            this._updatePassedInfo();
 
 
 
 
-                this.currentState._render(this.passedINFO);
-                this.render(this.passedINFO);
+            this.currentState._render(this.passedINFO);
+            this.render(this.passedINFO);
 
-
-
-
-                if (this.showFPS) {
-
-                    HYPER.Graphics.Draw(this.ctx).setFillColor("#FF0000").text("FPS: " + Math.round(1000 / this._anime._delta), 10, 10);
-
-                }
-
-            }
         },
 
         /**
@@ -562,6 +533,7 @@
                 // End Game Code
 
             }
+            
         },
 
         /**
@@ -571,6 +543,11 @@
 
         init: function () {
             this.currentState._init();
+            
+            this.passedINFO.canvas = this.canvas;
+            this.passedINFO.ctx = this.ctx;
+            this.passedINFO.view = this.view;
+            this.passedINFO.camera = this.camera;
             HYPER.Timer.addOnTick(this._looper);
         },
     };

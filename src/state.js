@@ -95,18 +95,6 @@
             _delta: 0,
         };
 
-        /**
-         * @private
-         * @property {function} _anime - stores all rendering speed settings.
-         */
-
-        this._anime = {
-            FPS: e.animeFPS || e.animefps || e.fps || 60,
-            _now: 0,
-            _then: HYPER.CURRENT_DATE,
-            _interval: 1000 / 60,
-            _delta: 0,
-        };
 
         /**
          * @property {string} backgroundColor - Background color of the state.
@@ -197,7 +185,7 @@
          * @property {array} pointerDATA - pointer data that is passed to children every loop.
          */
 
-        this.pointerDATA = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
+        this.pointerDATA = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
 
         /**
          * @property {array} children - Array of all children in the screen.
@@ -254,6 +242,12 @@
         this.onHold = e.onHold || no0p;
 
         /**
+         * @property {function} onHover - Function that is called every tick the screen is being hovered over by the mouse pointer.
+         */
+
+        this.onHover = e.onHover || no0p;
+
+        /**
          * @property {function} onDblClick - Function that is called every time the screen is double clicked.
          */
 
@@ -295,16 +289,6 @@
             this._tick._interval = 1000 / this._tick.FPS;
         },
 
-        /**
-         * Sets the update FPS of the screen. Note that this is the fastest all children can also render.
-         * @method HYPER.State.setAnimeFPS
-         * @param {number} fps - The desired FPS.
-         */
-
-        setAnimeFPS: function (fps) {
-            this._anime.FPS = fps;
-            this._anime._interval = 1000 / this._anime.FPS;
-        },
 
         /**
          * Adds children to the object.
@@ -336,7 +320,7 @@
          */
 
         removeAllChildren: function () {
-            this.children = [];
+            this.children.length = 0;
         },
 
         /**
@@ -442,7 +426,7 @@
 
         _updatePointerData: function (a) {
             //console.log(this);
-            for (var i = 0; i < 1; i++) {
+            for (var i = 0; i < 10; i++) {
 
                 this.pointerDATA[i].trueX = a.pointerDATA[i].x - this.view.x + this.camera.x;
                 this.pointerDATA[i].trueY = a.pointerDATA[i].y - this.view.y + this.camera.y;
@@ -469,6 +453,7 @@
          */
 
         updatePointerDATA_ID: function (DATA, i) {
+            
             this.pointerDATA[i].trueX = DATA.x - this.view.x + this.camera.x;
             this.pointerDATA[i].trueY = DATA.y - this.view.y + this.camera.y;
             this.pointerDATA[i].scaleFactorX = this.camera.width / this.view.width;
@@ -491,10 +476,7 @@
          */
 
         _updatePassedInfo: function (a) {
-            this.passedINFO.canvas = this.canvas;
-            this.passedINFO.ctx = this.ctx;
-            this.passedINFO.view = this.view;
-            this.passedINFO.camera = this.camera;
+            
 
             this._updatePointerData(a);
         },
@@ -617,6 +599,25 @@
         },
 
         /**
+         * Called when the mouse pointer is hovered.
+         * @private
+         * @method HYPER.State._onHover
+         */
+
+        _onHover: function (data) {
+            //console.log(data)
+            this.updatePointerDATA_ID(data, data._ID);
+            for (var i = 0; i < this.children.length; i++) {
+                if (this.children[i].alive) {
+                    if (this.children[i]._onHover) {
+                        this.children[i]._onHover(this.pointerDATA[data._ID]);
+                    }
+                }
+            }
+            this.onHover(this.pointerDATA[data._ID]);
+        },
+
+        /**
          * Called when the user double clicks.
          * @private
          * @method HYPER.State._onDblClick
@@ -691,89 +692,80 @@
          */
 
         _render: function (a) {
-            this._anime._now = HYPER.CURRENT_DATE;
-            this._anime._delta = this._anime._now - this._anime._then;
-
-            if (this._anime._delta > this._anime._interval) {
-
-                this._anime._then = this._anime._now - (this._anime._delta % this._anime._interval);
+            if (this.backgroundColor === "clear" || this.autoClear) {
 
 
-
-                if (this.backgroundColor === "clear" || this.autoClear) {
-
-
-                    HYPER.Graphics.Draw(a.ctx)
-                        .clearRect(
-                            0,
-                            0,
-                            a.canvas.width,
-                            a.canvas.height);
+                HYPER.Graphics.Draw(a.ctx)
+                    .clearRect(
+                        0,
+                        0,
+                        a.canvas.width,
+                        a.canvas.height);
 
 
-                }
+            }
 
 
 
 
-                if (this.motionBlur) {
+            if (this.motionBlur) {
 
-                    HYPER.Graphics.Draw(a.ctx, this.style)
-                        .bitmap(
-                            this.canvas,
-                            0,
-                            0,
-                            this.camera.width,
-                            this.camera.height,
-                            this.view.x,
-                            this.view.y,
-                            this.view.width,
-                            this.view.height);
+                HYPER.Graphics.Draw(a.ctx, this.style)
+                    .bitmap(
+                        this.canvas,
+                        0,
+                        0,
+                        this.camera.width,
+                        this.camera.height,
+                        this.view.x,
+                        this.view.y,
+                        this.view.width,
+                        this.view.height);
 
-                }
+            }
 
-                this._updateRenderingSettings(a);
-                this._updatePassedInfo(a);
-                this._renderChildren(this.passedINFO);
+            this._updateRenderingSettings(a);
+            this._updatePassedInfo(a);
+            this._renderChildren(this.passedINFO);
 
-                this.render(this.passedINFO);
-
-
+            this.render(this.passedINFO);
 
 
-                if (this.motionBlur) {
-
-                    HYPER.Graphics.Draw(a.ctx, this.style)
-                        .setAlpha(this.style.alpha / 2)
-                        .bitmap(
-                            this.canvas,
-                            0,
-                            0,
-                            this.camera.width,
-                            this.camera.height,
-                            this.view.x,
-                            this.view.y,
-                            this.view.width,
-                            this.view.height);
 
 
-                } else {
+            if (this.motionBlur) {
 
-                    HYPER.Graphics.Draw(a.ctx, this.style)
-                        .bitmap(
-                            this.canvas,
-                            0,
-                            0,
-                            this.camera.width,
-                            this.camera.height,
-                            this.view.x,
-                            this.view.y,
-                            this.view.width,
-                            this.view.height);
-                };
+                HYPER.Graphics.Draw(a.ctx, this.style)
+                    .setAlpha(this.style.alpha / 2)
+                    .bitmap(
+                        this.canvas,
+                        0,
+                        0,
+                        this.camera.width,
+                        this.camera.height,
+                        this.view.x,
+                        this.view.y,
+                        this.view.width,
+                        this.view.height);
 
 
+            } else {
+
+                HYPER.Graphics.Draw(a.ctx, this.style)
+                    .bitmap(
+                        this.canvas,
+                        0,
+                        0,
+                        this.camera.width,
+                        this.camera.height,
+                        this.view.x,
+                        this.view.y,
+                        this.view.width,
+                        this.view.height);
             };
+
+
+
         },
 
         /**
@@ -805,6 +797,10 @@
 
         _init: function () {
             this.init();
+            this.passedINFO.canvas = this.canvas;
+            this.passedINFO.ctx = this.ctx;
+            this.passedINFO.view = this.view;
+            this.passedINFO.camera = this.camera;
         },
     };
 
