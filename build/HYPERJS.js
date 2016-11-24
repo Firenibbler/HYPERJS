@@ -1,4 +1,4 @@
-/*! hyperjs - Version: 1.0.0 - 2016-10-21 - Author: Andrew Stavast */
+/*! hyperjs - Version: 1.0.0 - 2016-11-23 - Author: Andrew Stavast */
 /**
  * @author       Andrew Stavast <firenibbler@gmail.com>
  * @copyright    2016 Firenibbler Studios
@@ -43,9 +43,9 @@
     HYPER.CURRENT_DATE = Date.now();
     /**
      * Returns true if the user is using a mobile operating system.
-     * @method mobileAndTabvarcheck
+     * @method mobileAndTabletcheck
      */
-    window.mobileAndTabvarcheck = function() {
+    window.mobileAndTabletcheck = function() {
         var a = false;
         (function(b) {
             if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(b) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(b.substr(0, 4))) a = true;
@@ -996,7 +996,7 @@
      */
     HYPER.Input._addEventListeners = function() {
         // check to see if mobile.
-        if (mobileAndTabvarcheck()) {
+        if (mobileAndTabletcheck()) {
             // Init the touchmove listener
             document.addEventListener("touchmove", HYPER.Input.Pointer._listeners.touchmove);
             // Init the touchstart listener
@@ -1025,7 +1025,7 @@
         HYPER.Input.screens.push(a);
     };
     HYPER.Input.updateInput = function() {
-        for (var a = 0; a < 10; a++) {
+        for (var a = 0; a < 1; a++) {
             HYPER.Input.Pointer.point[a].x = HYPER.Input.Pointer.point[a]._x;
             HYPER.Input.Pointer.point[a].y = HYPER.Input.Pointer.point[a]._y;
             HYPER.Input.Pointer.point[a].up = HYPER.Input.Pointer.point[a]._up;
@@ -1037,20 +1037,23 @@
             HYPER.Input.Pointer.point[a]._down = false;
             HYPER.Input.Pointer.point[a]._dblclick = false;
             for (var b = 0; b < HYPER.Input.screens.length; b++) {
-                if (HYPER.Input.Pointer.point[a].click) {
-                    HYPER.Input.screens[b]._onClick(a);
-                }
-                if (HYPER.Input.Pointer.point[a].up) {
-                    HYPER.Input.screens[b]._onUp(a);
-                }
-                if (HYPER.Input.Pointer.point[a].down) {
-                    HYPER.Input.screens[b]._onDown(a);
-                }
-                if (HYPER.Input.Pointer.point[a].hold) {
-                    HYPER.Input.screens[b]._onHold(a);
-                }
-                if (HYPER.Input.Pointer.point[a].dblclick) {
-                    HYPER.Input.screens[b]._onDblClick(a);
+                if (HYPER.Input.Pointer.point[a].x > HYPER.Input.screens[b].canvas.offsetLeft && HYPER.Input.Pointer.point[a].y > HYPER.Input.screens[b].canvas.offsetTop && HYPER.Input.Pointer.point[a].x < HYPER.Input.screens[b].canvas.offsetLeft + HYPER.Input.screens[b].view.width && HYPER.Input.Pointer.point[a].y < HYPER.Input.screens[b].canvas.offsetTop + HYPER.Input.screens[b].view.height) {
+                    HYPER.Input.screens[b]._onHover(a);
+                    if (HYPER.Input.Pointer.point[a].click) {
+                        HYPER.Input.screens[b]._onClick(a);
+                    }
+                    if (HYPER.Input.Pointer.point[a].up) {
+                        HYPER.Input.screens[b]._onUp(a);
+                    }
+                    if (HYPER.Input.Pointer.point[a].down) {
+                        HYPER.Input.screens[b]._onDown(a);
+                    }
+                    if (HYPER.Input.Pointer.point[a].hold) {
+                        HYPER.Input.screens[b]._onHold(a);
+                    }
+                    if (HYPER.Input.Pointer.point[a].dblclick) {
+                        HYPER.Input.screens[b]._onDblClick(a);
+                    }
                 }
             }
         }
@@ -1316,6 +1319,10 @@
      * @param {number} [e.tall = 1] The number of frames tall the image is.
      */
     HYPER.Preload.SpriteSheet = function(a) {
+        a.frames = a.frames || {
+            wide: a.wide || 1,
+            tall: a.tall || 1
+        };
         /**
          * @property {string} _ID - The specific ID for this object.
          */
@@ -4848,23 +4855,26 @@
          */
         _update: function(a) {
             if (this.alive) {
-                if (this.x - this.size > a.camera.x + a.camera.width || this.y - this.size > a.camera.y + a.camera.height || this.x + this.size < a.camera.x || this.y + this.size < a.camera.y) {} else {
-                    this.x += this.vel.x;
-                    this.y += this.vel.y;
-                    this.angle += this.vel.angle;
-                    if (this.lifeTime > 0) {
-                        this.lifeTime--;
-                    }
-                    if (this.lifeTime <= 0) {
-                        this.alive = false;
-                    }
-                }
+                this.percentGone = this.lifeTime / this.lifeTimeTotal;
+                this.size = (this.startSize - this.endSize) * this.percentGone + this.endSize;
+                this._color = [ Math.floor((this.startColor[0] - this.endColor[0]) * this.percentGone + this.endColor[0]), Math.floor((this.startColor[1] - this.endColor[1]) * this.percentGone + this.endColor[1]), Math.floor((this.startColor[2] - this.endColor[2]) * this.percentGone + this.endColor[2]), (this.startColor[3] - this.endColor[3]) * this.percentGone + this.endColor[3] ];
+                this.RBGcolor = "rgb(" + this._color[0] + ", " + this._color[1] + ", " + this._color[2] + ")";
+                this._alpha = this._color[3] * style.alpha;
+                this.x += this.vel.x;
+                this.y += this.vel.y;
+                this.angle += this.vel.angle;
                 if (this.lifeTime > 0) {
                     this.lifeTime--;
                 }
                 if (this.lifeTime <= 0) {
                     this.alive = false;
                 }
+            }
+            if (this.lifeTime > 0) {
+                this.lifeTime--;
+            }
+            if (this.lifeTime <= 0) {
+                this.alive = false;
             }
         },
         /**
@@ -4875,17 +4885,12 @@
          */
         _render: function(a, b, c) {
             if (this.alive) {
-                c = c || this.style;
+                this.style = c || this.style;
                 if (this.x - this.size > a.camera.x + a.camera.width || this.y - this.size > a.camera.y + a.camera.height || this.x + this.size < a.camera.x || this.y + this.size < a.camera.y) {} else {
-                    var d = this.lifeTime / this.lifeTimeTotal;
-                    var e = (this.startSize - this.endSize) * d + this.endSize;
-                    this._color = [ Math.floor((this.startColor[0] - this.endColor[0]) * d + this.endColor[0]), Math.floor((this.startColor[1] - this.endColor[1]) * d + this.endColor[1]), Math.floor((this.startColor[2] - this.endColor[2]) * d + this.endColor[2]), (this.startColor[3] - this.endColor[3]) * d + this.endColor[3] ];
-                    var f = "rgb(" + this._color[0] + ", " + this._color[1] + ", " + this._color[2] + ")";
-                    var g = this._color[3] * c.alpha;
                     if (b.type === "bitmap") {
-                        HYPER.Graphics.Draw(a.ctx, c).setFillColor(f).setStrokeColor(f).setAlpha(g).bitmap(b, this.x - b.width / 2 - a.camera.x, this.y - b.height / 2 - a.camera.y, this.size, b.height / this.width * this.size, 0, 0, b.width, b.height, this.angle, b.width / 2, b.height / 2);
+                        HYPER.Graphics.Draw(a.ctx, this.style).setAlpha(alpha).bitmap(b, this.x - b.width / 2 - a.camera.x, this.y - b.height / 2 - a.camera.y, this.size, b.height / this.width * this.size, 0, 0, b.width, b.height, this.angle, b.width / 2, b.height / 2);
                     } else {
-                        HYPER.Graphics.Draw(a.ctx, c).setFillColor(f).setStrokeColor(f).setAlpha(g).circle(this.x - a.camera.x, this.y - a.camera.y, e);
+                        HYPER.Graphics.Draw(a.ctx, this.style).setFillColor(this.RBGcolor).setStrokeColor(this.RBGcolor).setAlpha(this._alpha).circle(this.x - a.camera.x, this.y - a.camera.y, this.size);
                     }
                 }
             }
@@ -5595,6 +5600,10 @@
          */
         this.onHold = a.onHold || no0p;
         /**
+         * @property {function} onHover - Function that is called every tick the screen is hovered over by the mouse pointer.
+         */
+        this.onHover = a.onHold || no0p;
+        /**
          * @property {function} onDblClick - Function that is called every time the screen is double clicked.
          */
         this.onDblClick = a.onDblClick || no0p;
@@ -5706,10 +5715,6 @@
          * @method HYPER.Screen._updatePassedInfo
          */
         _updatePassedInfo: function() {
-            this.passedINFO.canvas = this.canvas;
-            this.passedINFO.ctx = this.ctx;
-            this.passedINFO.view = this.view;
-            this.passedINFO.camera = this.camera;
             this._updatePointerData();
         },
         /**
@@ -5772,6 +5777,17 @@
             this._updatePointerData();
             this.currentState._onHold(this.pointerDATA[a]);
             this.onHold(this.pointerDATA[a]);
+        },
+        /**
+         * Called when the mouse pointer is hovering.
+         * @private
+         * @method HYPER.Screen._onHover
+         */
+        _onHover: function(a) {
+            this._updatePointerData();
+            //console.log(this.pointerDATA[id])
+            this.currentState._onHover(this.pointerDATA[a]);
+            this.onHover(this.pointerDATA[a]);
         },
         /**
          * Called when the user double clicks.
@@ -5844,6 +5860,10 @@
          */
         init: function() {
             this.currentState._init();
+            this.passedINFO.canvas = this.canvas;
+            this.passedINFO.ctx = this.ctx;
+            this.passedINFO.view = this.view;
+            this.passedINFO.camera = this.camera;
             HYPER.Timer.addOnTick(this._looper);
         }
     };
@@ -5997,7 +6017,7 @@
         /**
          * @property {array} pointerDATA - pointer data that is passed to children every loop.
          */
-        this.pointerDATA = [ {}, {}, {}, {}, {}, {}, {}, {}, {}, {} ];
+        this.pointerDATA = [ {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {} ];
         /**
          * @property {array} children - Array of all children in the screen.
          */
@@ -6034,6 +6054,10 @@
          * @property {function} onHold - Function that is called every tick the screen is being clicked by the mouse pointer.
          */
         this.onHold = a.onHold || no0p;
+        /**
+         * @property {function} onHover - Function that is called every tick the screen is being hovered over by the mouse pointer.
+         */
+        this.onHover = a.onHover || no0p;
         /**
          * @property {function} onDblClick - Function that is called every time the screen is double clicked.
          */
@@ -6206,10 +6230,6 @@
          * @param {object} a - Updating info.
          */
         _updatePassedInfo: function(a) {
-            this.passedINFO.canvas = this.canvas;
-            this.passedINFO.ctx = this.ctx;
-            this.passedINFO.view = this.view;
-            this.passedINFO.camera = this.camera;
             this._updatePointerData(a);
         },
         /**
@@ -6312,6 +6332,23 @@
             this.onHold(this.pointerDATA[a._ID]);
         },
         /**
+         * Called when the mouse pointer is hovered.
+         * @private
+         * @method HYPER.State._onHover
+         */
+        _onHover: function(a) {
+            //console.log(data)
+            this.updatePointerDATA_ID(a, a._ID);
+            for (var b = 0; b < this.children.length; b++) {
+                if (this.children[b].alive) {
+                    if (this.children[b]._onHover) {
+                        this.children[b]._onHover(this.pointerDATA[a._ID]);
+                    }
+                }
+            }
+            this.onHover(this.pointerDATA[a._ID]);
+        },
+        /**
          * Called when the user double clicks.
          * @private
          * @method HYPER.State._onDblClick
@@ -6381,16 +6418,16 @@
                 HYPER.Graphics.Draw(a.ctx).clearRect(0, 0, a.canvas.width, a.canvas.height);
             }
             if (this.motionBlur) {
-                HYPER.Graphics.Draw(a.ctx, this.style).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
+                HYPER.Graphics.Draw(a.ctx, this.style).bitmap(this.canvas, this.view.x, this.view.y, this.view.width, this.view.height, this.camera.x, this.camera.y, this.camera.width, this.camera.height);
             }
             this._updateRenderingSettings(a);
             this._updatePassedInfo(a);
             this._renderChildren(this.passedINFO);
             this.render(this.passedINFO);
             if (this.motionBlur) {
-                HYPER.Graphics.Draw(a.ctx, this.style).setAlpha(this.style.alpha / 2).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
+                HYPER.Graphics.Draw(a.ctx, this.style).setAlpha(this.style.alpha / 2).bitmap(this.canvas, this.view.x, this.view.y, this.view.width, this.view.height, this.camera.x, this.camera.y, this.camera.width, this.camera.height);
             } else {
-                HYPER.Graphics.Draw(a.ctx, this.style).bitmap(this.canvas, 0, 0, this.camera.width, this.camera.height, this.view.x, this.view.y, this.view.width, this.view.height);
+                HYPER.Graphics.Draw(a.ctx, this.style).bitmap(this.canvas, this.view.x, this.view.y, this.view.width, this.view.height, this.camera.x, this.camera.y, this.camera.width, this.camera.height);
             }
         },
         /**
@@ -6415,6 +6452,10 @@
          */
         _init: function() {
             this.init();
+            this.passedINFO.canvas = this.canvas;
+            this.passedINFO.ctx = this.ctx;
+            this.passedINFO.view = this.view;
+            this.passedINFO.camera = this.camera;
         }
     };
 })();
@@ -6772,10 +6813,6 @@
          * @param {object} a - Updating info.
          */
         _updatePassedInfo: function(a) {
-            this.passedINFO.canvas = this.canvas;
-            this.passedINFO.ctx = this.ctx;
-            this.passedINFO.view = this.view;
-            this.passedINFO.camera = this.camera;
             this._updatePointerData(a);
         },
         /**
@@ -6981,6 +7018,10 @@
          * @method HYPER.Layer._init
          */
         _init: function() {
+            this.passedINFO.canvas = this.canvas;
+            this.passedINFO.ctx = this.ctx;
+            this.passedINFO.view = this.view;
+            this.passedINFO.camera = this.camera;
             this.init();
         }
     };
@@ -7325,13 +7366,13 @@
          * @param {boolean} counterClockwise=false - Draw counter clockwise?.
          */
         this.circle = function(a, b, c, d, e, f) {
-            d = d || 0;
-            e = e || 360;
-            f = f || false;
+            this.startAngle = d || 0;
+            this.endAngle = e || 360;
+            this.counterClockwise = f || false;
             if (this.autoStart === true) {
                 this.ctx.beginPath();
             }
-            this.ctx.arc(a, b, c, HYPER.Math.degreesToRadians(d), HYPER.Math.degreesToRadians(e), f);
+            this.ctx.arc(a, b, c, HYPER.Math.degreesToRadians(this.startAngle), HYPER.Math.degreesToRadians(this.endAngle), this.counterClockwise);
             // fill the object
             if (this.style.fill) {
                 this.ctx.fill();
@@ -7447,18 +7488,18 @@
          * @param {number} rotY - Y rotation point of the rectangle.
          */
         this.rect = function(a, b, c, d, e, f, g) {
-            e = e || 0;
-            f = f || 0;
-            g = g || 0;
+            this.angle = e || 0;
+            this.rotX = f || 0;
+            this.rotY = g || 0;
             if (this.autoStart === true) {
                 this.ctx.beginPath();
             }
             if (e != 0) {
-                this.ctx.translate(a + f, b + g);
-                this.ctx.rotate(HYPER.Math.degreesToRadians(e));
-                this.ctx.rect(-f, -g, c, d);
-                this.ctx.rotate(-HYPER.Math.degreesToRadians(e));
-                this.ctx.translate(-(a + f), -(b + g));
+                this.ctx.translate(a + this.rotX, b + this.rotY);
+                this.ctx.rotate(HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.rect(-this.rotX, -this.rotY, c, d);
+                this.ctx.rotate(-HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.translate(-(a + this.rotX), -(b + this.rotY));
             } else {
                 this.ctx.rect(a, b, c, d);
             }
@@ -7489,21 +7530,21 @@
          * @param {number} rotY - Y rotation point of the triangle.
          */
         this.triangle = function(a, b, c, d, e, f, g, h, i) {
-            g = g || 0;
-            h = h || 0;
-            i = i || 0;
+            this.angle = g || 0;
+            this.rotX = h || 0;
+            this.rotY = i || 0;
             if (this.autoStart === true) {
                 this.ctx.beginPath();
             }
-            if (g != 0) {
-                this.ctx.translate(a + h, b + i);
-                this.ctx.rotate(HYPER.Math.degreesToRadians(g));
-                this.ctx.moveTo(a - a - h, b - a - i);
-                this.ctx.lineTo(c - a - h, d - b - i);
-                this.ctx.lineTo(e - a - h, f - b - i);
-                this.ctx.lineTo(a - a - h, b - b - i);
-                this.ctx.rotate(-HYPER.Math.degreesToRadians(g));
-                this.ctx.translate(-(a + h), -(b + i));
+            if (this.angle != 0) {
+                this.ctx.translate(a + this.rotX, b + this.rotY);
+                this.ctx.rotate(HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.moveTo(a - a - this.rotX, b - a - this.rotY);
+                this.ctx.lineTo(c - a - this.rotX, d - b - this.rotY);
+                this.ctx.lineTo(e - a - this.rotX, f - b - this.rotY);
+                this.ctx.lineTo(a - a - this.rotX, b - b - this.rotY);
+                this.ctx.rotate(-HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.translate(-(a + this.rotX), -(b + this.rotY));
             } else {
                 this.ctx.moveTo(a, b);
                 this.ctx.lineTo(c, d);
@@ -7531,22 +7572,22 @@
          * @param {number} rotY - Y rotation point of the polygon.
          */
         this.polygon = function(a, b, c, d) {
-            b = b || 0;
-            c = c || 0;
-            d = d || 0;
+            this.angle = b || 0;
+            this.rotX = c || 0;
+            this.rotY = d || 0;
             if (this.autoStart === true) {
                 this.ctx.beginPath();
             }
             if (b != 0) {
-                this.ctx.translate(a[0] + c, a[1] + d);
-                this.ctx.rotate(HYPER.Math.degreesToRadians(b));
-                this.ctx.moveTo(a[0] - a[0] - c, a[1] - a[1] - d);
+                this.ctx.translate(a[0] + this.rotX, a[1] + this.rotY);
+                this.ctx.rotate(HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.moveTo(a[0] - a[0] - this.rotX, a[1] - a[1] - this.rotY);
                 for (var e = 0; e < a.length; e += 2) {
-                    this.ctx.lineTo(a[e] - a[0] - c, a[e + 1] - a[1] - d);
+                    this.ctx.lineTo(a[e] - a[0] - this.rotX, a[e + 1] - a[1] - this.rotY);
                 }
-                this.ctx.lineTo(a[0] - a[0] - c, a[1] - a[1] - d);
-                this.ctx.rotate(-HYPER.Math.degreesToRadians(b));
-                this.ctx.translate(-(a[0] + c), -(a[1] + d));
+                this.ctx.lineTo(a[0] - a[0] - this.rotX, a[1] - a[1] - this.rotY);
+                this.ctx.rotate(-HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.translate(-(a[0] + this.rotX), -(a[1] + this.rotY));
             } else {
                 this.ctx.moveTo(a[0], a[1]);
                 for (var e = 0; e < a.length; e += 2) {
@@ -7578,23 +7619,23 @@
          * @param {number} rotY - Y rotation point of the text.
          */
         this.text = function(a, b, c, d, e, f) {
-            d = d || 0;
-            e = e || 0;
-            f = f || 0;
+            this.angle = d || 0;
+            this.rotX = e || 0;
+            this.rotY = f || 0;
             if (this.autoStart === true) {
                 this.ctx.beginPath();
             }
             if (d != 0) {
-                this.ctx.translate(b + e, c + f);
-                this.ctx.rotate(HYPER.Math.degreesToRadians(d));
+                this.ctx.translate(b + this.rotX, c + this.rotY);
+                this.ctx.rotate(HYPER.Math.degreesToRadians(this.angle));
                 if (this.style.fill) {
-                    this.ctx.fillText(a, -e, -f);
+                    this.ctx.fillText(a, -this.rotX, -this.rotY);
                 }
                 if (this.style.stroke) {
-                    this.ctx.strokeText(a, -e, -f);
+                    this.ctx.strokeText(a, -this.rotX, -this.rotY);
                 }
-                this.ctx.rotate(-HYPER.Math.degreesToRadians(d));
-                this.ctx.translate(-(b + e), -(c + f));
+                this.ctx.rotate(-HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.translate(-(b + this.rotX), -(c + this.rotY));
             } else {
                 if (this.style.fill) {
                     this.ctx.fillText(a, b, c);
@@ -7627,32 +7668,33 @@
          * @param {number} scaleY - Scaled Y value of the bitmap.
          */
         this.bitmap = function(a, b, c, d, e, f, g, h, i, j, k, l, m, n) {
-            j = j || 0;
-            k = k || 0;
-            l = l || 0;
+            this.angle = j || 0;
+            this.rotX = k || 0;
+            this.rotY = l || 0;
             if (a.bitmap) {
-                a = a.bitmap;
+                this.image = a.bitmap;
+            } else {
+                this.image = a;
             }
-            f = f || 0;
-            g = g || 0;
-            m = m || 1;
-            n = n || 1;
-            h = h || a.width;
-            i = i || a.height;
+            this.sx = f || 0;
+            this.sy = g || 0;
+            this.scaleX = m || 1;
+            this.scaleY = n || 1;
+            this.swidth = h || a.width;
+            this.sheight = i || a.height;
             if (this.autoStart === true) {
                 this.ctx.beginPath();
             }
-            if (j != 0 || m != 1 || n != 1) {
-                //this.ctx.save();
-                this.ctx.translate(b + k, c + l);
-                this.ctx.rotate(HYPER.Math.degreesToRadians(j));
-                this.ctx.scale(m, n);
-                this.ctx.drawImage(a, f, g, h, i, -k, -l, d, e);
-                this.ctx.scale(1 / m, 1 / n);
-                this.ctx.rotate(-HYPER.Math.degreesToRadians(j));
-                this.ctx.translate(-(b + k), -(c + l));
+            if (this.angle != 0 || this.scaleX != 1 || this.scaleY != 1) {
+                this.ctx.translate(b + this.rotX, c + this.rotY);
+                this.ctx.rotate(HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.scale(this.scaleX, this.scaleY);
+                this.ctx.drawImage(this.image, this.sx, this.sy, this.swidth, this.sheight, -this.rotX, -this.rotY, d, e);
+                this.ctx.scale(1 / this.scaleX, 1 / this.scaleY);
+                this.ctx.rotate(-HYPER.Math.degreesToRadians(this.angle));
+                this.ctx.translate(-(b + this.rotX), -(c + this.rotY));
             } else {
-                this.ctx.drawImage(a, f, g, h, i, b, c, d, e);
+                this.ctx.drawImage(this.image, this.sx, this.sy, this.swidth, this.sheight, b, c, d, e);
             }
             // fill the object
             if (this.style.fill) {

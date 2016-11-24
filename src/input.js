@@ -878,7 +878,7 @@
     HYPER.Input._addEventListeners = function () {
 
         // check to see if mobile.
-        if (mobileAndTabvarcheck()) {
+        if (mobileAndTabletcheck()) {
             // Init the touchmove listener
             document.addEventListener("touchmove", HYPER.Input.Pointer._listeners.touchmove);
             // Init the touchstart listener
