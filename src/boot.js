@@ -46,7 +46,7 @@
 
     /**
      * Returns true if the user is using a mobile operating system.
-     * @method mobileAndTabvarcheck
+     * @method mobileAndTabletcheck
      */
 
     window.mobileAndTabletcheck = function () {

@@ -9,6 +9,10 @@
      * @param {number} [e.tall = 1] The number of frames tall the image is.
      */
     HYPER.Preload.SpriteSheet = function (e) {
+        e.frames = e.frames || {
+            wide: e.wide || 1,
+            tall: e.tall || 1,
+        };
         /**
          * @property {string} _ID - The specific ID for this object.
          */

@@ -453,7 +453,7 @@
          */
 
         updatePointerDATA_ID: function (DATA, i) {
-            
+
             this.pointerDATA[i].trueX = DATA.x - this.view.x + this.camera.x;
             this.pointerDATA[i].trueY = DATA.y - this.view.y + this.camera.y;
             this.pointerDATA[i].scaleFactorX = this.camera.width / this.view.width;
@@ -476,7 +476,7 @@
          */
 
         _updatePassedInfo: function (a) {
-            
+
 
             this._updatePointerData(a);
         },
@@ -713,14 +713,14 @@
                 HYPER.Graphics.Draw(a.ctx, this.style)
                     .bitmap(
                         this.canvas,
-                        0,
-                        0,
-                        this.camera.width,
-                        this.camera.height,
                         this.view.x,
                         this.view.y,
                         this.view.width,
-                        this.view.height);
+                        this.view.height,
+                        this.camera.x,
+                        this.camera.y,
+                        this.camera.width,
+                        this.camera.height);
 
             }
 
@@ -739,14 +739,14 @@
                     .setAlpha(this.style.alpha / 2)
                     .bitmap(
                         this.canvas,
-                        0,
-                        0,
-                        this.camera.width,
-                        this.camera.height,
                         this.view.x,
                         this.view.y,
                         this.view.width,
-                        this.view.height);
+                        this.view.height,
+                        this.camera.x,
+                        this.camera.y,
+                        this.camera.width,
+                        this.camera.height);
 
 
             } else {
@@ -754,14 +754,14 @@
                 HYPER.Graphics.Draw(a.ctx, this.style)
                     .bitmap(
                         this.canvas,
-                        0,
-                        0,
-                        this.camera.width,
-                        this.camera.height,
                         this.view.x,
                         this.view.y,
                         this.view.width,
-                        this.view.height);
+                        this.view.height,
+                        this.camera.x,
+                        this.camera.y,
+                        this.camera.width,
+                        this.camera.height);
             };
 
 
