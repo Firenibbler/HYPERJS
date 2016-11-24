@@ -175,6 +175,8 @@
 
         this.lifeTimeTotal = e.lifeTimeTotal || e.lifeTime || 100;
 
+        this._color = [];
+
     };
 
     HYPER.Particle.Particle.prototype = {
@@ -188,23 +190,26 @@
 
         _update: function (a) {
             if (this.alive) {
-                if (this.x - this.size > a.camera.x + a.camera.width ||
-                    this.y - this.size > a.camera.y + a.camera.height ||
-                    this.x + this.size &lt; a.camera.x ||
-                    this.y + this.size &lt; a.camera.y) {
 
-                } else {
-                    this.x += this.vel.x;
-                    this.y += this.vel.y;
-                    this.angle += this.vel.angle;
-                    if (this.lifeTime > 0) {
-                        this.lifeTime--;
-                    }
 
-                    if (this.lifeTime &lt;= 0) {
-                        this.alive = false;
-                    }
-                }
+
+
+
+                this.percentGone = this.lifeTime / this.lifeTimeTotal;
+                this.size = ((this.startSize - this.endSize) * this.percentGone) + this.endSize;
+                this._color = [
+                        Math.floor(((this.startColor[0] - this.endColor[0]) * this.percentGone) + this.endColor[0]),
+                        Math.floor(((this.startColor[1] - this.endColor[1]) * this.percentGone) + this.endColor[1]),
+                        Math.floor(((this.startColor[2] - this.endColor[2]) * this.percentGone) + this.endColor[2]),
+                    ((this.startColor[3] - this.endColor[3]) * this.percentGone) + this.endColor[3],
+                ];
+
+                this.RBGcolor = "rgb(" + this._color[0] + ", " + this._color[1] + ", " + this._color[2] + ")"
+                this._alpha = this._color[3] * style.alpha;
+
+                this.x += this.vel.x;
+                this.y += this.vel.y;
+                this.angle += this.vel.angle;
                 if (this.lifeTime > 0) {
                     this.lifeTime--;
                 }
@@ -213,6 +218,14 @@
                     this.alive = false;
                 }
             }
+            if (this.lifeTime > 0) {
+                this.lifeTime--;
+            }
+
+            if (this.lifeTime &lt;= 0) {
+                this.alive = false;
+            }
+
 
         },
 
@@ -225,28 +238,19 @@
 
         _render: function (a, image, style) {
             if (this.alive) {
-                image = image || {};
-                style = style || this.style;
+
+                this.style = style || this.style;
                 if (this.x - this.size > a.camera.x + a.camera.width ||
                     this.y - this.size > a.camera.y + a.camera.height ||
                     this.x + this.size &lt; a.camera.x ||
                     this.y + this.size &lt; a.camera.y) {
 
                 } else {
-                    var percentGone = this.lifeTime / this.lifeTimeTotal;
-                    var size = ((this.startSize - this.endSize) * percentGone) + this.endSize;
-                    var color = [
-                        Math.floor(((this.startColor[0] - this.endColor[0]) * percentGone) + this.endColor[0]),
-                        Math.floor(((this.startColor[1] - this.endColor[1]) * percentGone) + this.endColor[1]),
-                        Math.floor(((this.startColor[2] - this.endColor[2]) * percentGone) + this.endColor[2]),
-                        ((this.startColor[3] - this.endColor[3]) * percentGone) + this.endColor[3],
-                ];
 
-                    var RBGcolor = "rgb(" + color[0] + ", " + color[1] + ", " + color[2] + ")"
-                    var alpha = color[3] * style.alpha;
+
                     if (image.type === "bitmap") {
 
-                        HYPER.Graphics.Draw(a.ctx, style).setFillColor(RBGcolor).setStrokeColor(RBGcolor).setAlpha(alpha).bitmap(image,
+                        HYPER.Graphics.Draw(a.ctx, this.style).setAlpha(alpha).bitmap(image,
                             this.x - (image.width / 2) - a.camera.x,
                             this.y - (image.height / 2) - a.camera.y,
                             this.size, (image.height / this.width) * this.size,
@@ -258,7 +262,7 @@
                             image.width / 2,
                             image.height / 2);
                     } else {
-                        HYPER.Graphics.Draw(a.ctx, style).setFillColor(RBGcolor).setStrokeColor(RBGcolor).setAlpha(alpha).circle(this.x - a.camera.x, this.y - a.camera.y, size);
+                        HYPER.Graphics.Draw(a.ctx, this.style).setFillColor(this.RBGcolor).setStrokeColor(this.RBGcolor).setAlpha(this._alpha).circle(this.x - a.camera.x, this.y - a.camera.y, this.size);
                     }
                 }
 
@@ -606,6 +610,7 @@
                 }
             }
             a.ctx.globalAlpha = 1;
+            HYPER.Graphics.Draw(a.ctx).setAlpha(1);
         },
 
     };
@@ -621,13 +626,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HYPER.Audio.Howl.html">Howl</a></li><li><a href="HYPER.Audio.HowlerGlobal.html">HowlerGlobal</a></li><li><a href="HYPER.Audio.Sound.html">Sound</a></li><li><a href="HYPER.Button.html">Button</a></li><li><a href="HYPER.Graphics.Animation.html">Animation</a></li><li><a href="HYPER.Graphics.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Graphics.Draw.html">Draw</a></li><li><a href="HYPER.Graphics.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Graphics.Style.html">Style</a></li><li><a href="HYPER.Group.html">Group</a></li><li><a href="HYPER.Layer.html">Layer</a></li><li><a href="HYPER.Particle.Emitter.html">Emitter</a></li><li><a href="HYPER.Particle.Particle.html">Particle</a></li><li><a href="HYPER.Physics.BoxJS.Box.html">Box</a></li><li><a href="HYPER.Physics.BoxJS.Engine.html">Engine</a></li><li><a href="HYPER.Physics.BoxJS.material.html">material</a></li><li><a href="HYPER.Physics.BoxJS.Vector2.html">Vector2</a></li><li><a href="HYPER.Preload.Audio.html">Audio</a></li><li><a href="HYPER.Preload.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Preload.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Screen.html">Screen</a></li><li><a href="HYPER.Sprite.html">Sprite</a></li><li><a href="HYPER.State.html">State</a></li></ul><h3>Namespaces</h3><ul><li><a href="HYPER.html">HYPER</a></li><li><a href="HYPER.Graphics.html">Graphics</a></li><li><a href="HYPER.Input.html">Input</a></li><li><a href="HYPER.Input.Keys.html">Keys</a></li><li><a href="HYPER.Input.Pointer.html">Pointer</a></li><li><a href="HYPER.Math.html">Math</a></li><li><a href="HYPER.Particle.html">Particle</a></li><li><a href="HYPER.Physics.html">Physics</a></li><li><a href="HYPER.Physics.BoxJS.html">BoxJS</a></li><li><a href="HYPER.Physics.Vector.html">Vector</a></li><li><a href="HYPER.Preload.html">Preload</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mobileAndTabletcheck">mobileAndTabletcheck</a></li><li><a href="global.html#no0p">no0p</a></li><li><a href="global.html#setFPS">setFPS</a></li><li><a href="global.html#Timer">Timer</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HYPER.Audio.Howl.html">Howl</a></li><li><a href="HYPER.Audio.HowlerGlobal.html">HowlerGlobal</a></li><li><a href="HYPER.Audio.Sound.html">Sound</a></li><li><a href="HYPER.Button.html">Button</a></li><li><a href="HYPER.Graphics.Animation.html">Animation</a></li><li><a href="HYPER.Graphics.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Graphics.Draw.html">Draw</a></li><li><a href="HYPER.Graphics.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Graphics.Style.html">Style</a></li><li><a href="HYPER.Group.html">Group</a></li><li><a href="HYPER.Layer.html">Layer</a></li><li><a href="HYPER.Particle.Emitter.html">Emitter</a></li><li><a href="HYPER.Particle.Particle.html">Particle</a></li><li><a href="HYPER.Physics.BoxJS.Box.html">Box</a></li><li><a href="HYPER.Physics.BoxJS.Engine.html">Engine</a></li><li><a href="HYPER.Physics.BoxJS.material.html">material</a></li><li><a href="HYPER.Physics.BoxJS.Vector2.html">Vector2</a></li><li><a href="HYPER.Preload.Audio.html">Audio</a></li><li><a href="HYPER.Preload.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Preload.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Screen.html">Screen</a></li><li><a href="HYPER.Sprite.html">Sprite</a></li><li><a href="HYPER.State.html">State</a></li></ul><h3>Namespaces</h3><ul><li><a href="HYPER.html">HYPER</a></li><li><a href="HYPER.Graphics.html">Graphics</a></li><li><a href="HYPER.Input.html">Input</a></li><li><a href="HYPER.Input.Keys.html">Keys</a></li><li><a href="HYPER.Input.Pointer.html">Pointer</a></li><li><a href="HYPER.Math.html">Math</a></li><li><a href="HYPER.Particle.html">Particle</a></li><li><a href="HYPER.Physics.html">Physics</a></li><li><a href="HYPER.Physics.BoxJS.html">BoxJS</a></li><li><a href="HYPER.Physics.Vector.html">Vector</a></li><li><a href="HYPER.Preload.html">Preload</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mobileAndTabletcheck">mobileAndTabletcheck</a></li><li><a href="global.html#no0p">no0p</a></li><li><a href="global.html#Timer">Timer</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Wed Oct 12 2016 19:53:46 GMT-0700 (US Mountain Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Nov 24 2016 10:22:40 GMT-0700 (US Mountain Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -1,4 +1,4 @@
-/*! hyperjs - Version: 1.0.0 - 2016-11-23 - Author: Andrew Stavast */
+/*! hyperjs - Version: 1.0.0 - 2016-11-24 - Author: Andrew Stavast */
 /**
  * @author       Andrew Stavast <firenibbler@gmail.com>
  * @copyright    2016 Firenibbler Studios
@@ -3610,11 +3610,11 @@
     };
     /**
      * Check a collision between 2 objects.
-     * @method HYPER.Physics.checkCollision
+     * @method HYPER.Physics.checkSingleCollision
      * @param {object} obj1 - First object to be checked.
      * @param {object} obj2 - Second object to be checked.
      */
-    HYPER.Physics.checkCollision = function(a, b) {
+    HYPER.Physics.checkSingleCollision = function(a, b) {
         var c, d;
         if (!a.size) {
             c = "point";
@@ -3665,6 +3665,49 @@
             }
             if (d === "point") {
                 return HYPER.Physics.checkPointCircleCollision(b, a);
+            }
+        }
+    };
+    /**
+     * Check a collision between 2 objects or groups of objects.
+     * @method HYPER.Physics.checkCollision
+     * @param {object} obj1 - First object or group to be checked.
+     * @param {object} obj2 - Second object or group to be checked.
+     * @param {function} callback - what to do if two objects are colliding, returns the objects in question.
+     */
+    HYPER.Physics.checkCollision = function(a, b, c) {
+        c = c || no0p;
+        if (a.type === "group" && b.type === "group") {
+            for (var d = 0; d < a.group.length; d++) {
+                if (a.group[d].alive) {
+                    for (var e = 0; e < b.group.length; e++) {
+                        if (b.group[e].alive) {
+                            if (HYPER.Physics.checkSingleCollision(a.group[d], b.group[e])) {
+                                c(a.group[d], b.group[e]);
+                            }
+                        }
+                    }
+                }
+            }
+        } else if (a.type === "group") {
+            for (var d = 0; d < a.group.length; d++) {
+                if (a.group[d].alive) {
+                    if (HYPER.Physics.checkSingleCollision(a.group[d], b)) {
+                        c(a.group[d], b);
+                    }
+                }
+            }
+        } else if (b.type === "group") {
+            for (var e = 0; e < b.group.length; e++) {
+                if (b.group[e].alive) {
+                    if (HYPER.Physics.checkSingleCollision(a, b.group[e])) {
+                        c(a, b.group[e]);
+                    }
+                }
+            }
+        } else {
+            if (HYPER.Physics.checkSingleCollision(a, b)) {
+                c(a, b);
             }
         }
     };

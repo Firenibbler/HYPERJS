@@ -223,6 +223,12 @@
          */
 
         this.onHold = e.onHold || no0p;
+        
+        /**
+         * @property {function} onHover - Function that is called every tick the screen is hovered over by the mouse pointer.
+         */
+
+        this.onHover = e.onHold || no0p;
 
         /**
          * @property {function} onDblClick - Function that is called every time the screen is double clicked.
@@ -269,19 +275,6 @@
 
         /**
          * @private
-         * @property {function} _anime - stores all rendering speed settings.
-         */
-
-        this._anime = {
-            FPS: e.animeFPS || e.animefps || e.fps || 60,
-            _now: 0,
-            _then: HYPER.CURRENT_DATE,
-            _interval: 16.66666666666666,
-            _delta: 0,
-        };
-
-        /**
-         * @private
          * @property {function} _looper - function that loops the render and update functions.
          */
 
@@ -302,20 +295,9 @@
          * @param {number} fps - The desired FPS.
          */
 
-        setTickFPS: function (fps) {
+        setFPS: function (fps) {
             this._tick.FPS = fps;
             this._tick._interval = 1000 / this._tick.FPS;
-        },
-
-        /**
-         * Sets the update FPS of the screen. Note that this is the fastest all children can also render.
-         * @method HYPER.Screen.setAnimeFPS
-         * @param {number} fps - The desired FPS.
-         */
-
-        setAnimeFPS: function (fps) {
-            this._anime.FPS = fps;
-            this._anime._interval = 1000 / this._anime.FPS;
         },
 
         /**
@@ -325,7 +307,7 @@
          */
 
         setCurrentState: function (state) {
-            if (state._ID.split(" ")[0] === "state") {
+            if (state.type === "state") {
                 this.currentState = state;
                 this.currentState._init();
             } else {
@@ -350,12 +332,8 @@
                 //console.log(this.canvas.style.width, this.canvas.style.height)
             }
             if (this.camera.width != this.canvas.width ||
-                this.camera.height != this.canvas.height ||
-                this.camera.width != this.canvas.width ||
                 this.camera.height != this.canvas.height) {
 
-                this.canvas.width = this.camera.width;
-                this.canvas.height = this.camera.height;
                 this.canvas.width = this.camera.width;
                 this.canvas.height = this.camera.height;
 
@@ -395,10 +373,6 @@
          */
 
         _updatePassedInfo: function () {
-            this.passedINFO.canvas = this.canvas;
-            this.passedINFO.ctx = this.ctx;
-            this.passedINFO.view = this.view;
-            this.passedINFO.camera = this.camera;
 
             this._updatePointerData();
         },
@@ -485,6 +459,20 @@
             this.currentState._onHold(this.pointerDATA[id]);
             this.onHold(this.pointerDATA[id]);
         },
+        
+        /**
+         * Called when the mouse pointer is hovering.
+         * @private
+         * @method HYPER.Screen._onHover
+         */
+
+        _onHover: function (id) {
+            
+            this._updatePointerData();
+            //console.log(this.pointerDATA[id])
+            this.currentState._onHover(this.pointerDATA[id]);
+            this.onHover(this.pointerDATA[id]);
+        },
 
         /**
          * Called when the user double clicks.
@@ -538,37 +526,16 @@
          */
 
         _render: function () {
-            this._anime._now = HYPER.CURRENT_DATE;
-            this._anime._delta = this._anime._now - this._anime._then;
+            this._updateRenderingSettings();
 
-            if (this._anime._delta > this._anime._interval) {
-
-                this._anime._then = this._anime._now - (this._anime._delta % this._anime._interval);
-
-                // Game Code
-
-
-
-                this._updateRenderingSettings();
-
-                this._updatePassedInfo();
+            this._updatePassedInfo();
 
 
 
 
-                this.currentState._render(this.passedINFO);
-                this.render(this.passedINFO);
+            this.currentState._render(this.passedINFO);
+            this.render(this.passedINFO);
 
-
-
-
-                if (this.showFPS) {
-
-                    HYPER.Graphics.Draw(this.ctx).setFillColor("#FF0000").text("FPS: " + Math.round(1000 / this._anime._delta), 10, 10);
-
-                }
-
-            }
         },
 
         /**
@@ -594,6 +561,7 @@
                 // End Game Code
 
             }
+            
         },
 
         /**
@@ -603,6 +571,11 @@
 
         init: function () {
             this.currentState._init();
+            
+            this.passedINFO.canvas = this.canvas;
+            this.passedINFO.ctx = this.ctx;
+            this.passedINFO.view = this.view;
+            this.passedINFO.camera = this.camera;
             HYPER.Timer.addOnTick(this._looper);
         },
     };
@@ -617,13 +590,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HYPER.Audio.Howl.html">Howl</a></li><li><a href="HYPER.Audio.HowlerGlobal.html">HowlerGlobal</a></li><li><a href="HYPER.Audio.Sound.html">Sound</a></li><li><a href="HYPER.Button.html">Button</a></li><li><a href="HYPER.Graphics.Animation.html">Animation</a></li><li><a href="HYPER.Graphics.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Graphics.Draw.html">Draw</a></li><li><a href="HYPER.Graphics.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Graphics.Style.html">Style</a></li><li><a href="HYPER.Group.html">Group</a></li><li><a href="HYPER.Layer.html">Layer</a></li><li><a href="HYPER.Particle.Emitter.html">Emitter</a></li><li><a href="HYPER.Particle.Particle.html">Particle</a></li><li><a href="HYPER.Physics.BoxJS.Box.html">Box</a></li><li><a href="HYPER.Physics.BoxJS.Engine.html">Engine</a></li><li><a href="HYPER.Physics.BoxJS.material.html">material</a></li><li><a href="HYPER.Physics.BoxJS.Vector2.html">Vector2</a></li><li><a href="HYPER.Preload.Audio.html">Audio</a></li><li><a href="HYPER.Preload.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Preload.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Screen.html">Screen</a></li><li><a href="HYPER.Sprite.html">Sprite</a></li><li><a href="HYPER.State.html">State</a></li></ul><h3>Namespaces</h3><ul><li><a href="HYPER.html">HYPER</a></li><li><a href="HYPER.Graphics.html">Graphics</a></li><li><a href="HYPER.Input.html">Input</a></li><li><a href="HYPER.Input.Keys.html">Keys</a></li><li><a href="HYPER.Input.Pointer.html">Pointer</a></li><li><a href="HYPER.Math.html">Math</a></li><li><a href="HYPER.Particle.html">Particle</a></li><li><a href="HYPER.Physics.html">Physics</a></li><li><a href="HYPER.Physics.BoxJS.html">BoxJS</a></li><li><a href="HYPER.Physics.Vector.html">Vector</a></li><li><a href="HYPER.Preload.html">Preload</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mobileAndTabletcheck">mobileAndTabletcheck</a></li><li><a href="global.html#no0p">no0p</a></li><li><a href="global.html#setFPS">setFPS</a></li><li><a href="global.html#Timer">Timer</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HYPER.Audio.Howl.html">Howl</a></li><li><a href="HYPER.Audio.HowlerGlobal.html">HowlerGlobal</a></li><li><a href="HYPER.Audio.Sound.html">Sound</a></li><li><a href="HYPER.Button.html">Button</a></li><li><a href="HYPER.Graphics.Animation.html">Animation</a></li><li><a href="HYPER.Graphics.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Graphics.Draw.html">Draw</a></li><li><a href="HYPER.Graphics.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Graphics.Style.html">Style</a></li><li><a href="HYPER.Group.html">Group</a></li><li><a href="HYPER.Layer.html">Layer</a></li><li><a href="HYPER.Particle.Emitter.html">Emitter</a></li><li><a href="HYPER.Particle.Particle.html">Particle</a></li><li><a href="HYPER.Physics.BoxJS.Box.html">Box</a></li><li><a href="HYPER.Physics.BoxJS.Engine.html">Engine</a></li><li><a href="HYPER.Physics.BoxJS.material.html">material</a></li><li><a href="HYPER.Physics.BoxJS.Vector2.html">Vector2</a></li><li><a href="HYPER.Preload.Audio.html">Audio</a></li><li><a href="HYPER.Preload.Bitmap.html">Bitmap</a></li><li><a href="HYPER.Preload.SpriteSheet.html">SpriteSheet</a></li><li><a href="HYPER.Screen.html">Screen</a></li><li><a href="HYPER.Sprite.html">Sprite</a></li><li><a href="HYPER.State.html">State</a></li></ul><h3>Namespaces</h3><ul><li><a href="HYPER.html">HYPER</a></li><li><a href="HYPER.Graphics.html">Graphics</a></li><li><a href="HYPER.Input.html">Input</a></li><li><a href="HYPER.Input.Keys.html">Keys</a></li><li><a href="HYPER.Input.Pointer.html">Pointer</a></li><li><a href="HYPER.Math.html">Math</a></li><li><a href="HYPER.Particle.html">Particle</a></li><li><a href="HYPER.Physics.html">Physics</a></li><li><a href="HYPER.Physics.BoxJS.html">BoxJS</a></li><li><a href="HYPER.Physics.Vector.html">Vector</a></li><li><a href="HYPER.Preload.html">Preload</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mobileAndTabletcheck">mobileAndTabletcheck</a></li><li><a href="global.html#no0p">no0p</a></li><li><a href="global.html#Timer">Timer</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Wed Oct 12 2016 19:53:46 GMT-0700 (US Mountain Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Nov 24 2016 10:22:40 GMT-0700 (US Mountain Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

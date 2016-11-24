@@ -119,12 +119,12 @@
 
     /**
      * Check a collision between 2 objects.
-     * @method HYPER.Physics.checkCollision
+     * @method HYPER.Physics.checkSingleCollision
      * @param {object} obj1 - First object to be checked.
      * @param {object} obj2 - Second object to be checked.
      */
 
-    HYPER.Physics.checkCollision = function (obj1, obj2) {
+    HYPER.Physics.checkSingleCollision = function (obj1, obj2) {
         var obj1type, obj2type;
         if (!obj1.size) {
             obj1type = "point";
@@ -180,5 +180,50 @@
         }
 
     }
+
+    /**
+     * Check a collision between 2 objects or groups of objects.
+     * @method HYPER.Physics.checkCollision
+     * @param {object} obj1 - First object or group to be checked.
+     * @param {object} obj2 - Second object or group to be checked.
+     * @param {function} callback - what to do if two objects are colliding, returns the objects in question.
+     */
+    
+    HYPER.Physics.checkCollision = function (obj1, obj2, callback) {
+        callback = callback || no0p;
+        if (obj1.type === "group" && obj2.type === "group") {
+            for (var i1 = 0; i1 < obj1.group.length; i1++) {
+                if (obj1.group[i1].alive) {
+                    for (var i2 = 0; i2 < obj2.group.length; i2++) {
+                        if (obj2.group[i2].alive) {
+                            if (HYPER.Physics.checkSingleCollision(obj1.group[i1], obj2.group[i2])) {
+                                callback(obj1.group[i1], obj2.group[i2]);
+                            }
+                        }
+                    }
+                }
+            }
+        } else if (obj1.type === "group") {
+            for (var i1 = 0; i1 < obj1.group.length; i1++) {
+                if (obj1.group[i1].alive) {
+                    if (HYPER.Physics.checkSingleCollision(obj1.group[i1], obj2)) {
+                        callback(obj1.group[i1], obj2);
+                    }
+                }
+            }
+        } else if (obj2.type === "group") {
+            for (var i2 = 0; i2 < obj2.group.length; i2++) {
+                if (obj2.group[i2].alive) {
+                    if (HYPER.Physics.checkSingleCollision(obj1, obj2.group[i2])) {
+                        callback(obj1, obj2.group[i2]);
+                    }
+                }
+            }
+        } else {
+            if (HYPER.Physics.checkSingleCollision(obj1, obj2)) {
+                callback(obj1, obj2);
+            }
+        }
+    };
 
 })();
