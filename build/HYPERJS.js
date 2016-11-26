@@ -1,4 +1,4 @@
-/*! hyperjs - Version: 1.0.0 - 2016-11-24 - Author: Andrew Stavast */
+/*! hyperjs - Version: 1.0.0 - 2016-11-25 - Author: Andrew Stavast */
 /**
  * @author       Andrew Stavast <firenibbler@gmail.com>
  * @copyright    2016 Firenibbler Studios
@@ -1496,6 +1496,7 @@
             for (var b = 0; b < arguments.length; b++) {
                 arguments[b].name = arguments[b].name || "animation" + Math.random() + "" + Math.random();
                 this.animations[a.name] = {};
+                this.animations[a.name].name = arguments[b].name;
                 this.animations[a.name].frames = a.frames || [ 0 ];
                 this.animations[a.name].next = a.next || a.name;
                 this.animations[a.name].fps = a.fps || 30;
@@ -3525,7 +3526,7 @@
      * @param {object} obj2 - Second object to be checked.
      */
     HYPER.Physics.checkAABBCollision = function(a, b) {
-        if (a.x <= b.x + b.size.width && a.x + a.size.width >= b.x && a.y <= b.y + b.size.height && a.y + a.size.height > b.y) {
+        if (a.x <= b.x + b.width && a.x + a.width >= b.x && a.y <= b.y + b.height && a.y + a.height > b.y) {
             return true;
         } else {
             return false;
@@ -3538,7 +3539,7 @@
      * @param {object} circle2 - Second object to be checked.
      */
     HYPER.Physics.checkCircleCollision = function(a, b) {
-        if (Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)) < a.size.radius + b.size.radius) {
+        if (Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)) < a.radius + b.radius) {
             return true;
         } else {
             return false;
@@ -3553,21 +3554,21 @@
     HYPER.Physics.checkCircleAABBCollision = function(e, f) {
         a = Math.abs(e.x - f.x - f.size.width / 2);
         b = Math.abs(e.y - f.y - f.size.height / 2);
-        if (a > f.size.width / 2 + e.size.radius) {
+        if (a > f.width / 2 + e.radius) {
             return false;
         }
-        if (b > f.size.height / 2 + e.size.radius) {
+        if (b > f.height / 2 + e.radius) {
             return false;
         }
-        if (a <= f.size.width / 2) {
+        if (a <= f.width / 2) {
             return true;
         }
-        if (b <= f.size.height / 2) {
+        if (b <= f.height / 2) {
             return true;
         }
-        c = a - f.size.width / 2;
-        d = b - f.size.height / 2;
-        return c * c + d * d <= e.size.radius * e.size.radius;
+        c = a - f.width / 2;
+        d = b - f.height / 2;
+        return c * c + d * d <= e.radius * e.radius;
     };
     /**
      * Check a collision between a point and an AABB object.
@@ -3576,7 +3577,7 @@
      * @param {object} rect - Second object to be checked.
      */
     HYPER.Physics.checkPointAABBCollision = function(a, b) {
-        if (a.x >= b.x && a.x <= b.x + b.size.width && a.y >= b.y && a.y <= b.y + b.size.height) {
+        if (a.x >= b.x && a.x <= b.x + b.width && a.y >= b.y && a.y <= b.y + b.height) {
             return true;
         } else {
             return false;
@@ -3589,7 +3590,7 @@
      * @param {object} circle - Second object to be checked.
      */
     HYPER.Physics.checkPointCircleCollision = function(a, b) {
-        if (Math.sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)) <= b.size.radius) {
+        if (Math.sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)) <= b.radius) {
             return true;
         } else {
             return false;
@@ -3615,25 +3616,7 @@
      * @param {object} obj2 - Second object to be checked.
      */
     HYPER.Physics.checkSingleCollision = function(a, b) {
-        var c, d;
-        if (!a.size) {
-            c = "point";
-        }
-        if (!a.shape === "circle") {
-            c = "circle";
-        }
-        if (!a.shape === "rect") {
-            c = "rect";
-        }
-        if (!b.size) {
-            d = "point";
-        }
-        if (!b.shape === "circle") {
-            d = "circle";
-        }
-        if (!b.shape === "rect") {
-            d = "rect";
-        }
+        var c = a.shape, d = b.shape;
         if (c === "point") {
             if (d === "point") {
                 return HYPER.Physics.checkPointPointCollision(a, b);
@@ -4823,6 +4806,14 @@
             var b = a.endColor;
             a.endColor = [ HYPER.Graphics.hexToRed(b), HYPER.Graphics.hexToGreen(b), HYPER.Graphics.hexToBlue(b), a.endAlpha || 1 ];
         }
+        this.texture = a.texture || {};
+        if (this.texture.type === "spritesheet") {
+            this.texture = new HYPER.Graphics.Animation({
+                spriteSheet: this.texture
+            });
+        }
+        this.texture.frames = this.texture.frames || {};
+        this.texture.bitmap = this.texture.bitmap || {};
         /**
          * @property {string} _ID - The specific ID for this object.
          */
@@ -4902,7 +4893,7 @@
                 this.size = (this.startSize - this.endSize) * this.percentGone + this.endSize;
                 this._color = [ Math.floor((this.startColor[0] - this.endColor[0]) * this.percentGone + this.endColor[0]), Math.floor((this.startColor[1] - this.endColor[1]) * this.percentGone + this.endColor[1]), Math.floor((this.startColor[2] - this.endColor[2]) * this.percentGone + this.endColor[2]), (this.startColor[3] - this.endColor[3]) * this.percentGone + this.endColor[3] ];
                 this.RBGcolor = "rgb(" + this._color[0] + ", " + this._color[1] + ", " + this._color[2] + ")";
-                this._alpha = this._color[3] * style.alpha;
+                this._alpha = this._color[3] * this.style.alpha;
                 this.x += this.vel.x;
                 this.y += this.vel.y;
                 this.angle += this.vel.angle;
@@ -4930,8 +4921,8 @@
             if (this.alive) {
                 this.style = c || this.style;
                 if (this.x - this.size > a.camera.x + a.camera.width || this.y - this.size > a.camera.y + a.camera.height || this.x + this.size < a.camera.x || this.y + this.size < a.camera.y) {} else {
-                    if (b.type === "bitmap") {
-                        HYPER.Graphics.Draw(a.ctx, this.style).setAlpha(alpha).bitmap(b, this.x - b.width / 2 - a.camera.x, this.y - b.height / 2 - a.camera.y, this.size, b.height / this.width * this.size, 0, 0, b.width, b.height, this.angle, b.width / 2, b.height / 2);
+                    if (this.texture.type === "bitmap") {
+                        HYPER.Graphics.Draw(a.ctx, this.style).setAlpha(alpha).bitmap(this.texture, this.x - this.texture.width / 2 - a.camera.x, this.y - this.texture.height / 2 - a.camera.y, this.size, this.size, 0, 0, this.texture.width, this.texture.height, this.angle, this.texture.width / 2, this.texture.height / 2);
                     } else {
                         HYPER.Graphics.Draw(a.ctx, this.style).setFillColor(this.RBGcolor).setStrokeColor(this.RBGcolor).setAlpha(this._alpha).circle(this.x - a.camera.x, this.y - a.camera.y, this.size);
                     }
@@ -4988,6 +4979,10 @@
          */
         this.height = a.height || this.texture.height || 0;
         /**
+         * @property {number} zIndex - The z index of the emmitter
+         */
+        this.zIndex = a.zIndex || 0;
+        /**
          * @property {number} lifeTime - How long the object should be alive.
          */
         this.lifeTime = a.lifeTime || 100;
@@ -5036,6 +5031,10 @@
          */
         this.locked = false;
         /**
+         * @property {object} texture - The image to show as the particle.
+         */
+        this.texture = a.texture || {};
+        /**
          * @property {object} lockedOffset - the X and Y offset that the object will be locked to.
          */
         this.lockedOffset = {
@@ -5065,6 +5064,8 @@
             x: 0,
             y: 0
         };
+        this.particleRender = a.particleRender || no0p;
+        this.particleUpdate = a.particleUpdate || no0p;
         for (var c = 0; c < this.maxParticles; c++) {
             this.particles[c] = new HYPER.Particle.Particle({
                 x: this.x,
@@ -5077,7 +5078,10 @@
                 endAlpha: this.endAlpha,
                 style: this.style,
                 lifeTime: this.lifeTime,
-                lifeTimeTotal: this.lifeTimeTotal
+                lifeTimeTotal: this.lifeTimeTotal,
+                texture: this.texture,
+                render: this.particleRender,
+                update: this.particleUpdate
             });
         }
     };
@@ -5238,17 +5242,16 @@
             x: 0,
             y: 0
         };
-        if (this.texture.type === "spritesheet") {
-            this.texture = new HYPER.Graphics.Animation({
-                spriteSheet: this.texture
-            });
-        }
         this.texture.frames = this.texture.frames || {};
         this.texture.bitmap = this.texture.bitmap || {};
         /**
          * @property {string} type - Internal type identifier for the object.
          */
         this.type = "group";
+        /**
+         * @property {number} zIndexMax - The max z index allowed.
+         */
+        this.zIndexMax = a.zIndexMax || 100;
         /**
          * @property {object} style - the style this object will be rendered with.
          */
@@ -5391,7 +5394,14 @@
             for (var c = 0; c < this.group.length; c++) {
                 if (!this.group[c].alive) {
                     b = true;
-                    this.group[c].texture = a.texture || this.texture;
+                    /*
+                                        if (this.texture.type === "spritesheet") {
+                                            this.group[i].texture = new HYPER.Graphics.Animation({
+                                                spriteSheet: this.texture,
+                                            });
+                                        };
+                    */
+                    //this.group[i].texture = a.texture || this.texture;
                     this.group[c].style = a.style || this.style;
                     this.group[c].zIndex = a.zIndex || this.zIndex;
                     this.group[c].x = a.x || this.x;
@@ -5477,9 +5487,13 @@
          * @param {number} a - Information to be known about parent object.
          */
         _render: function(a) {
-            for (var b = 0; b < this.group.length; b++) {
-                if (this.group[b].alive) {
-                    this.group[b]._render(a);
+            for (var b = 0; b <= this.zIndexMax; b++) {
+                for (var c = 0; c < this.group.length; c++) {
+                    if (this.group[c].alive) {
+                        if (Math.round(this.group[c].zIndex) === b) {
+                            this.group[c]._render(a);
+                        }
+                    }
                 }
             }
         }
@@ -6070,6 +6084,10 @@
          */
         this.enableZindex = a.enableZindex || false;
         /**
+         * @property {number} zIndexMax - The max Zindex to calculate.
+         */
+        this.zIndexMax = a.zIndexMax || 100;
+        /**
          * @property {function} render - user defined function that is called at the end of every frame.
          */
         this.render = a.render || no0p;
@@ -6177,7 +6195,7 @@
         _renderChildren: function(a) {
             if (this.enableZindex === true) {
                 // Loop through all z-indexes
-                for (var b = 0; b < this.children.length; b++) {
+                for (var b = 0; b < this.zIndexMax; b++) {
                     // Loop through all children
                     for (var c = 0; c < this.children.length; c++) {
                         // Check to see if the z-index is correct.
@@ -7872,6 +7890,7 @@
             this.currentFrame = b || 0;
             this.currentAnimation = this.spriteSheet.animations[a];
             this.FPS = this.spriteSheet.animations[a].fps;
+            this._interval = 1e3 / this.FPS;
             this.paused = false;
         },
         /**
@@ -7901,6 +7920,9 @@
                         this.currentFrame = 0;
                         if (!this.currentAnimation.loop) {
                             this.paused = true;
+                        }
+                        if (this.currentAnimation.next != this.currentAnimation.name) {
+                            this.start(this.currentAnimation.next);
                         }
                     }
                 } else {}
@@ -7934,15 +7956,71 @@
                 i = Math.abs(i);
                 j = Math.abs(j);
                 if (k === "x") {
-                    HYPER.Graphics.Draw(a.ctx).bitmap(this.spriteSheet.flippedX.bitmap, b, c, d, e, -this.spriteSheet.frameINFO[this.currentFrame].x + this.spriteSheet.flippedX.bitmap.width, this.spriteSheet.frameINFO[this.currentFrame].y, -this.spriteSheet.frameINFO[this.currentFrame].width, this.spriteSheet.frameINFO[this.currentFrame].height, f, g, h, i, j);
+                    HYPER.Graphics.Draw(a.ctx).bitmap(this.spriteSheet.flippedX.bitmap, b, c, d, e, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].x + this.spriteSheet.flippedX.bitmap.width, this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].y, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].width, this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].height, f, g, h, i, j);
                 } else if (k === "xy") {
-                    HYPER.Graphics.Draw(a.ctx).bitmap(this.spriteSheet.flippedXY.bitmap, b, c, d, e, -this.spriteSheet.frameINFO[this.currentFrame].x + this.spriteSheet.flippedX.bitmap.width, -this.spriteSheet.frameINFO[this.currentFrame].y + this.spriteSheet.flippedX.bitmap.height, -this.spriteSheet.frameINFO[this.currentFrame].width, -this.spriteSheet.frameINFO[this.currentFrame].height, f, g, h, i, j);
+                    HYPER.Graphics.Draw(a.ctx).bitmap(this.spriteSheet.flippedXY.bitmap, b, c, d, e, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].x + this.spriteSheet.flippedX.bitmap.width, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].y + this.spriteSheet.flippedX.bitmap.height, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].width, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].height, f, g, h, i, j);
                 } else if (k === "y") {
-                    HYPER.Graphics.Draw(a.ctx).bitmap(this.spriteSheet.flippedY.bitmap, b, c, d, e, this.spriteSheet.frameINFO[this.currentFrame].x, -this.spriteSheet.frameINFO[this.currentFrame].y + this.spriteSheet.flippedX.bitmap.height, this.spriteSheet.frameINFO[this.currentFrame].width, -this.spriteSheet.frameINFO[this.currentFrame].height, f, g, h, i, j);
+                    HYPER.Graphics.Draw(a.ctx).bitmap(this.spriteSheet.flippedY.bitmap, b, c, d, e, this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].x, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].y + this.spriteSheet.flippedX.bitmap.height, this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].width, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].height, f, g, h, i, j);
                 } else {
-                    HYPER.Graphics.Draw(a.ctx).bitmap(this.spriteSheet.bitmap, b, c, d, e, this.spriteSheet.frameINFO[this.currentFrame].x, this.spriteSheet.frameINFO[this.currentFrame].y, this.spriteSheet.frameINFO[this.currentFrame].width, this.spriteSheet.frameINFO[this.currentFrame].height, f, g, h, i, j);
+                    HYPER.Graphics.Draw(a.ctx).bitmap(this.spriteSheet.bitmap, b, c, d, e, this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].x, this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].y, this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].width, this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].height, f, g, h, i, j);
                 }
             }
+        }
+    };
+})();
+
+(function() {
+    "use strict";
+    /**
+     * Create new bitmap images.
+     * @class HYPER.Graphics.Bitmap
+     * @param {object} e Object to pass all button info.
+     * @param {number} e.width=300 Width of the new bitmap.
+     * @param {number} e.height=150 Height of the new bitmap.
+     */
+    HYPER.Graphics.Bitmap = function(a) {
+        /**
+         * @property {string} _ID - The specific ID for this object.
+         */
+        this._ID = "bitmap " + Math.random() + "" + Math.random();
+        /**
+         * @property {string} type - The type of object this is.
+         */
+        this.type = "bitmap";
+        /**
+         * @property {number} width=300 - The width of the new image.
+         */
+        this.width = a.width || 300;
+        /**
+         * @property {number} height=150 - The height of the new image.
+         */
+        this.height = a.height || 150;
+        /**
+         * @property {object} bitmap - The canvas that the new bitmap draws to.
+         */
+        this.bitmap = document.createElement("canvas");
+        /**
+         * @property {object} ctx - The ctx that the new bitmap uses.
+         */
+        this.ctx = this.bitmap.getContext("2d");
+        this.bitmap.width = this.width;
+        this.bitmap.height = this.height;
+    };
+    HYPER.Graphics.Bitmap.prototype = {
+        /**
+         * Draws to the bitmap, uses same methods that HYPER.Graphics.Draw uses. 
+         * @method HYPER.Graphics.Bitmap.draw
+         * @param {HYPER.Graphics.Style} style - the style used to draw.
+         */
+        draw: function(a) {
+            return HYPER.Graphics.Draw(this.ctx, a);
+        },
+        /**
+         * Clears the bitmap.
+         * @method HYPER.Graphics.Bitmap.clear
+         */
+        clear: function() {
+            HYPER.Graphics.Draw(this.ctx).clearRect(0, 0, this.bitmap.width, this.bitmap.height);
         }
     };
 })();
@@ -7973,6 +8051,10 @@
          * @property {object} body - The object that will store all physics info if physics is enabled.
          */
         this.body = {};
+        /**
+         * @property {string} shape - The shape of the sprite.
+         */
+        this.shape = "rect";
         /**
          * @property {object} texture - The texture of the object to be rendered.
          */

@@ -10,17 +10,17 @@
      * @param {function} e.onFrame Function called every frame change.
      */
     HYPER.Graphics.Animation = function (e) {
-        
+
         /**
          * @property {object} spriteSheet - The spritesheet to be used for the animation.
          */
-        
+
         this.spriteSheet = e.spriteSheet || {};
 
         /**
          * @property {string} _ID - The specific ID for this object.
          */
-        
+
         this._ID = "animation " + Math.random() + "" + Math.random();
 
         /**
@@ -156,6 +156,7 @@
             this.currentFrame = frameNumber || 0;
             this.currentAnimation = this.spriteSheet.animations[animationName];
             this.FPS = this.spriteSheet.animations[animationName].fps;
+            this._interval = 1000 / this.FPS;
             this.paused = false;
         },
 
@@ -196,6 +197,10 @@
                         this.currentFrame = 0;
                         if (!this.currentAnimation.loop) {
                             this.paused = true;
+                        }
+                        if (this.currentAnimation.next != this.currentAnimation.name) {
+                            this.start(this.currentAnimation.next);
+
                         }
                     }
 
@@ -242,9 +247,9 @@
                         x,
                         y,
                         width,
-                        height, -this.spriteSheet.frameINFO[this.currentFrame].x + this.spriteSheet.flippedX.bitmap.width,
-                        this.spriteSheet.frameINFO[this.currentFrame].y, -this.spriteSheet.frameINFO[this.currentFrame].width,
-                        this.spriteSheet.frameINFO[this.currentFrame].height,
+                        height, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].x + this.spriteSheet.flippedX.bitmap.width,
+                        this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].y, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].width,
+                        this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].height,
                         angle,
                         rotX,
                         rotY,
@@ -255,7 +260,7 @@
                         x,
                         y,
                         width,
-                        height, -this.spriteSheet.frameINFO[this.currentFrame].x + this.spriteSheet.flippedX.bitmap.width, -this.spriteSheet.frameINFO[this.currentFrame].y + this.spriteSheet.flippedX.bitmap.height, -this.spriteSheet.frameINFO[this.currentFrame].width, -this.spriteSheet.frameINFO[this.currentFrame].height,
+                        height, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].x + this.spriteSheet.flippedX.bitmap.width, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].y + this.spriteSheet.flippedX.bitmap.height, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].width, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].height,
                         angle,
                         rotX,
                         rotY,
@@ -267,8 +272,8 @@
                         y,
                         width,
                         height,
-                        this.spriteSheet.frameINFO[this.currentFrame].x, -this.spriteSheet.frameINFO[this.currentFrame].y + this.spriteSheet.flippedX.bitmap.height,
-                        this.spriteSheet.frameINFO[this.currentFrame].width, -this.spriteSheet.frameINFO[this.currentFrame].height,
+                        this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].x, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].y + this.spriteSheet.flippedX.bitmap.height,
+                        this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].width, -this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].height,
                         angle,
                         rotX,
                         rotY,
@@ -280,10 +285,10 @@
                         y,
                         width,
                         height,
-                        this.spriteSheet.frameINFO[this.currentFrame].x,
-                        this.spriteSheet.frameINFO[this.currentFrame].y,
-                        this.spriteSheet.frameINFO[this.currentFrame].width,
-                        this.spriteSheet.frameINFO[this.currentFrame].height,
+                        this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].x,
+                        this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].y,
+                        this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].width,
+                        this.spriteSheet.frameINFO[this.currentAnimation.frames[this.currentFrame]].height,
                         angle,
                         rotX,
                         rotY,

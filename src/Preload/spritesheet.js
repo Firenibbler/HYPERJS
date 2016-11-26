@@ -258,6 +258,7 @@
             for (var i = 0; i < arguments.length; i++) {
                 arguments[i].name = arguments[i].name || "animation" + Math.random() + "" + Math.random();
                 this.animations[animeDATA.name] = {};
+                this.animations[animeDATA.name].name = arguments[i].name;
                 this.animations[animeDATA.name].frames = animeDATA.frames || [0];
                 this.animations[animeDATA.name].next = animeDATA.next || animeDATA.name;
                 this.animations[animeDATA.name].fps = animeDATA.fps || 30;

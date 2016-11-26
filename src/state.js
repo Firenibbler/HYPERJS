@@ -198,6 +198,12 @@
          */
 
         this.enableZindex = e.enableZindex || false;
+        
+        /**
+         * @property {number} zIndexMax - The max Zindex to calculate.
+         */
+
+        this.zIndexMax = e.zIndexMax || 100;
 
         /**
          * @property {function} render - user defined function that is called at the end of every frame.
@@ -365,7 +371,7 @@
         _renderChildren: function (a) {
             if (this.enableZindex === true) {
                 // Loop through all z-indexes
-                for (var z = 0; z < this.children.length; z++) {
+                for (var z = 0; z < this.zIndexMax; z++) {
                     // Loop through all children
                     for (var i = 0; i < this.children.length; i++) {
                         // Check to see if the z-index is correct.
