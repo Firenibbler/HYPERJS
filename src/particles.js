@@ -49,6 +49,20 @@
 
         }
 
+        this.texture = e.texture || {};
+
+
+        if (this.texture.type === "spritesheet") {
+            this.texture = new HYPER.Graphics.Animation({
+                spriteSheet: this.texture,
+            });
+        }
+
+        this.texture.frames = this.texture.frames || {};
+        this.texture.bitmap = this.texture.bitmap || {};
+
+
+
         /**
          * @property {string} _ID - The specific ID for this object.
          */
@@ -177,7 +191,7 @@
                 ];
 
                 this.RBGcolor = "rgb(" + this._color[0] + ", " + this._color[1] + ", " + this._color[2] + ")"
-                this._alpha = this._color[3] * style.alpha;
+                this._alpha = this._color[3] * this.style.alpha;
 
                 this.x += this.vel.x;
                 this.y += this.vel.y;
@@ -220,26 +234,25 @@
                 } else {
 
 
-                    if (image.type === "bitmap") {
+                    if (this.texture.type === "bitmap") {
 
-                        HYPER.Graphics.Draw(a.ctx, this.style).setAlpha(alpha).bitmap(image,
-                            this.x - (image.width / 2) - a.camera.x,
-                            this.y - (image.height / 2) - a.camera.y,
-                            this.size, (image.height / this.width) * this.size,
+                        HYPER.Graphics.Draw(a.ctx, this.style).setAlpha(this._alpha).bitmap(
+                            this.texture,
+                            this.x - (this.texture.width / 2) - a.camera.x,
+                            this.y - (this.texture.height / 2) - a.camera.y,
+                            this.size,
+                            this.size,
                             0,
                             0,
-                            image.width,
-                            image.height,
+                            this.texture.width,
+                            this.texture.height,
                             this.angle,
-                            image.width / 2,
-                            image.height / 2);
+                            this.texture.width / 2,
+                            this.texture.height / 2);
                     } else {
                         HYPER.Graphics.Draw(a.ctx, this.style).setFillColor(this.RBGcolor).setStrokeColor(this.RBGcolor).setAlpha(this._alpha).circle(this.x - a.camera.x, this.y - a.camera.y, this.size);
                     }
                 }
-
-
-
             }
         },
     };
@@ -308,6 +321,12 @@
          */
 
         this.height = e.height || this.texture.height || 0;
+        
+        /**
+         * @property {number} zIndex - The z index of the emmitter
+         */
+
+        this.zIndex = e.zIndex || 0;
 
         /**
          * @property {number} lifeTime - How long the object should be alive.
@@ -382,6 +401,12 @@
         this.locked = false;
 
         /**
+         * @property {object} texture - The image to show as the particle.
+         */
+
+        this.texture = e.texture || {};
+
+        /**
          * @property {object} lockedOffset - the X and Y offset that the object will be locked to.
          */
 
@@ -437,6 +462,9 @@
             y: 0
         };
 
+        this.particleRender = e.particleRender || no0p;
+        this.particleUpdate = e.particleUpdate || no0p;
+
 
 
         for (var i = 0; i < this.maxParticles; i++) {
@@ -452,7 +480,9 @@
                 style: this.style,
                 lifeTime: this.lifeTime,
                 lifeTimeTotal: this.lifeTimeTotal,
-
+                texture: this.texture,
+                render: this.particleRender,
+                update: this.particleUpdate,
             });
         }
 

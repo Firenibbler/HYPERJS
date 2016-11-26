@@ -28,6 +28,12 @@
          */
 
         this.body = {};
+        
+        /**
+         * @property {string} shape - The shape of the sprite.
+         */
+        
+        this.shape = "rect";
 
 
         /**

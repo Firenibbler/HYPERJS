@@ -16,8 +16,8 @@
      */
 
     HYPER.Physics.checkAABBCollision = function (obj1, obj2) {
-        if (obj1.x <= obj2.x + obj2.size.width && obj1.x + obj1.size.width >= obj2.x &&
-            obj1.y <= obj2.y + obj2.size.height && obj1.y + obj1.size.height > obj2.y) {
+        if (obj1.x <= obj2.x + obj2.width && obj1.x + obj1.width >= obj2.x &&
+            obj1.y <= obj2.y + obj2.height && obj1.y + obj1.height > obj2.y) {
             return true;
         } else {
             return false;
@@ -32,7 +32,7 @@
      */
 
     HYPER.Physics.checkCircleCollision = function (circle1, circle2) {
-        if (Math.sqrt((circle1.x - circle2.x) * (circle1.x - circle2.x) + (circle1.y - circle2.y) * (circle1.y - circle2.y)) < circle1.size.radius + circle2.size.radius) {
+        if (Math.sqrt((circle1.x - circle2.x) * (circle1.x - circle2.x) + (circle1.y - circle2.y) * (circle1.y - circle2.y)) < circle1.radius + circle2.radius) {
             return true;
         } else {
             return false;
@@ -50,23 +50,23 @@
         distX = Math.abs(circle.x - rect.x - rect.size.width / 2);
         distY = Math.abs(circle.y - rect.y - rect.size.height / 2);
 
-        if (distX > (rect.size.width / 2 + circle.size.radius)) {
+        if (distX > (rect.width / 2 + circle.radius)) {
             return false;
         }
-        if (distY > (rect.size.height / 2 + circle.size.radius)) {
+        if (distY > (rect.height / 2 + circle.radius)) {
             return false;
         }
 
-        if (distX <= (rect.size.width / 2)) {
+        if (distX <= (rect.width / 2)) {
             return true;
         }
-        if (distY <= (rect.size.height / 2)) {
+        if (distY <= (rect.height / 2)) {
             return true;
         }
 
-        dx = distX - rect.size.width / 2;
-        dy = distY - rect.size.height / 2;
-        return (dx * dx + dy * dy <= (circle.size.radius * circle.size.radius));
+        dx = distX - rect.width / 2;
+        dy = distY - rect.height / 2;
+        return (dx * dx + dy * dy <= (circle.radius * circle.radius));
     }
 
     /**
@@ -78,9 +78,9 @@
 
     HYPER.Physics.checkPointAABBCollision = function (point, rect) {
         if (point.x >= rect.x &&
-            point.x <= rect.x + rect.size.width &&
+            point.x <= rect.x + rect.width &&
             point.y >= rect.y &&
-            point.y <= rect.y + rect.size.height) {
+            point.y <= rect.y + rect.height) {
             return true;
         } else {
             return false;
@@ -95,7 +95,7 @@
      */
 
     HYPER.Physics.checkPointCircleCollision = function (point, circle) {
-        if (Math.sqrt((circle.x - point.x) * (circle.x - point.x) + (circle.y - point.y) * (circle.y - point.y)) <= circle.size.radius) {
+        if (Math.sqrt((circle.x - point.x) * (circle.x - point.x) + (circle.y - point.y) * (circle.y - point.y)) <= circle.radius) {
             return true;
         } else {
             return false;
@@ -125,25 +125,9 @@
      */
 
     HYPER.Physics.checkSingleCollision = function (obj1, obj2) {
-        var obj1type, obj2type;
-        if (!obj1.size) {
-            obj1type = "point";
-        }
-        if (!obj1.shape === "circle") {
-            obj1type = "circle";
-        }
-        if (!obj1.shape === "rect") {
-            obj1type = "rect";
-        }
-        if (!obj2.size) {
-            obj2type = "point";
-        }
-        if (!obj2.shape === "circle") {
-            obj2type = "circle";
-        }
-        if (!obj2.shape === "rect") {
-            obj2type = "rect";
-        }
+        var obj1type = obj1.shape,
+            obj2type = obj2.shape;
+
 
         if (obj1type === "point") {
             if (obj2type === "point") {
@@ -188,7 +172,7 @@
      * @param {object} obj2 - Second object or group to be checked.
      * @param {function} callback - what to do if two objects are colliding, returns the objects in question.
      */
-    
+
     HYPER.Physics.checkCollision = function (obj1, obj2, callback) {
         callback = callback || no0p;
         if (obj1.type === "group" && obj2.type === "group") {

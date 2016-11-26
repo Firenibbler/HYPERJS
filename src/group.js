@@ -55,12 +55,6 @@
             y: 0
         };
 
-        if (this.texture.type === "spritesheet") {
-            this.texture = new HYPER.Graphics.Animation({
-                spriteSheet: this.texture,
-            });
-        }
-
         this.texture.frames = this.texture.frames || {};
         this.texture.bitmap = this.texture.bitmap || {};
 
@@ -69,6 +63,12 @@
          */
 
         this.type = "group";
+
+        /**
+         * @property {number} zIndexMax - The max z index allowed.
+         */
+
+        this.zIndexMax = e.zIndexMax || 100;
 
         /**
          * @property {object} style - the style this object will be rendered with.
@@ -278,7 +278,14 @@
             for (var i = 0; i < this.group.length; i++) {
                 if (!this.group[i].alive) {
                     found = true;
-                    this.group[i].texture = a.texture || this.texture;
+                    /*
+                                        if (this.texture.type === "spritesheet") {
+                                            this.group[i].texture = new HYPER.Graphics.Animation({
+                                                spriteSheet: this.texture,
+                                            });
+                                        };
+                    */
+                    //this.group[i].texture = a.texture || this.texture;
                     this.group[i].style = a.style || this.style;
                     this.group[i].zIndex = a.zIndex || this.zIndex;
                     this.group[i].x = a.x || this.x;
@@ -370,9 +377,13 @@
          */
 
         _render: function (g) {
-            for (var i = 0; i < this.group.length; i++) {
-                if (this.group[i].alive) {
-                    this.group[i]._render(g);
+            for (var z = 0; z <= this.zIndexMax; z++) {
+                for (var i = 0; i < this.group.length; i++) {
+                    if (this.group[i].alive) {
+                        if (Math.round(this.group[i].zIndex) === z) {
+                            this.group[i]._render(g);
+                        }
+                    }
                 }
             }
         },
